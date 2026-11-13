@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1584" height="396" viewBox="0 0 1584 396" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif">
+  <defs>
+    <pattern id="g" width="44" height="44" patternUnits="userSpaceOnUse">
+      <path d="M44 0H0V44" fill="none" stroke="#1c1c1c" stroke-width="2"/>
+    </pattern>
+  </defs>
+  <rect width="1584" height="396" fill="#000"/>
+  <rect x="860" width="724" height="396" fill="url(#g)"/>
+  <path d="M1180 -20 C 1140 120, 1300 200, 1240 420" fill="none" stroke="#276EF1" stroke-opacity=".45" stroke-width="54" stroke-linecap="round"/>
+  <path d="M940 320 C 1040 320, 1060 200, 1180 190 S 1400 160, 1470 80" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-dasharray="2 20"/>
+  <rect x="922" y="302" width="36" height="36" fill="#fff"/><rect x="934" y="314" width="12" height="12" fill="#000"/>
+  <circle cx="1470" cy="80" r="20" fill="#fff"/><circle cx="1470" cy="80" r="7" fill="#000"/>
+  <rect x="1300" y="230" width="64" height="64" rx="16" fill="#06C167"/>
+  <rect x="1060" y="80" width="64" height="64" rx="16" fill="#276EF1"/>
+  <rect x="1440" y="250" width="64" height="64" rx="16" fill="#FFC043"/>
+
+  <text x="80" y="110" fill="#fff" font-size="54" font-weight="700" letter-spacing="-2">Uber</text>
+  <text x="232" y="110" fill="#AFAFAF" font-size="28" font-weight="500">Kariyer · Türkiye</text>
+  <text x="80" y="230" fill="#fff" font-size="76" font-weight="700" letter-spacing="-3">Yola birlikte çıkalım<tspan fill="#06C167">.</tspan></text>
+  <text x="80" y="300" fill="#AFAFAF" font-size="28">Teknoloji · Teslimat · Ulaşım · Kurumsal · Operasyon</text>
+</svg>

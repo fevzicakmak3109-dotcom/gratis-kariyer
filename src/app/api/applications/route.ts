@@ -1,0 +1,116 @@
+import { NextResponse } from "next/server";
+import { randomUUID } from "crypto";
+import { createApplication } from "@/lib/storage";
+import { BUSINESS_LINES, CITIES } from "@/lib/positions";
+import type { Application } from "@/lib/types";
+
+export const runtime = "nodejs";
+
+const MAX_CV = 5 * 1024 * 1024;
+const ALLOWED = {
+  pdf: "application/pdf",
+  doc: "application/msword",
+  docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+} as const;
+
+const str = (v: FormDataEntryValue | null, max = 200) =>
+  typeof v === "string" ? v.trim().slice(0, max) : "";
+
+function normalizePhone(raw: string) {
+  let d = raw.replace(/\D/g, "");
+  if (d.startsWith("90")) d = d.slice(2);
+  if (d.startsWith("0")) d = d.slice(1);
+  if (!/^5\d{9}$/.test(d)) return null;
+  return `+90 ${d.slice(0, 3)} ${d.slice(3, 6)} ${d.slice(6, 8)} ${d.slice(8)}`;
+}
+
+function looksLikeDoc(buf: Buffer, ext: string) {
+  if (ext === "pdf") return buf.subarray(0, 5).toString("latin1") === "%PDF-";
+  if (ext === "docx") return buf[0] === 0x50 && buf[1] === 0x4b; // zip
+  if (ext === "doc") return buf[0] === 0xd0 && buf[1] === 0xcf; // OLE
+  return false;
+}
+
+export async function POST(req: Request) {
+  let form: FormData;
+  try {
+    form = await req.formData();
+  } catch {
+    return NextResponse.json({ error: "Form okunamadı." }, { status: 400 });
+  }
+
+  // Bot tuzağı: gerçek kullanıcılar bu alanı görmez.
+  if (str(form.get("website"))) return NextResponse.json({ ok: true });
+
+  const errors: Record<string, string> = {};
+  const firstName = str(form.get("firstName"), 60);
+  const lastName = str(form.get("lastName"), 60);
+  const email = str(form.get("email"), 120).toLowerCase();
+  const phoneRaw = str(form.get("phone"), 30);
+  const businessLine = str(form.get("businessLine"), 40);
+  const role = str(form.get("role"), 80);
+  const city = str(form.get("city"), 40);
+  const linkedin = str(form.get("linkedin"), 200);
+  const message = str(form.get("message"), 1000);
+  const consent = form.get("consent") === "on" || form.get("consent") === "true";
+  const cv = form.get("cv");
+
+  if (firstName.length < 2) errors.firstName = "Adını gir.";
+  if (lastName.length < 2) errors.lastName = "Soyadını gir.";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) errors.email = "Geçerli bir e-posta adresi gir.";
+  const phone = normalizePhone(phoneRaw);
+  if (!phone) errors.phone = "05XX XXX XX XX formatında bir cep telefonu gir.";
+  const line = BUSINESS_LINES.find((b) => b.id === businessLine);
+  if (!line) errors.businessLine = "Bir iş kolu seç.";
+  else if (role && !line.roles.includes(role)) errors.role = "Geçerli bir pozisyon seç.";
+  if (!(CITIES as readonly string[]).includes(city)) errors.city = "Bir şehir seç.";
+  if (linkedin && !/^https?:\/\/(www\.)?linkedin\.com\//i.test(linkedin))
+    errors.linkedin = "LinkedIn profil bağlantısı linkedin.com ile başlamalı.";
+  if (!consent) errors.consent = "Devam etmek için KVKK metnini onaylamalısın.";
+
+  let cvBuf: Buffer | null = null;
+  let ext = "";
+  if (!(cv instanceof File) || cv.size === 0) {
+    errors.cv = "CV dosyanı yükle.";
+  } else {
+    ext = cv.name.split(".").pop()?.toLowerCase() ?? "";
+    if (!(ext in ALLOWED)) errors.cv = "Yalnızca PDF, DOC veya DOCX yükleyebilirsin.";
+    else if (cv.size > MAX_CV) errors.cv = "CV en fazla 5 MB olabilir.";
+    else {
+      cvBuf = Buffer.from(await cv.arrayBuffer());
+      if (!looksLikeDoc(cvBuf, ext)) errors.cv = "Dosya geçerli bir PDF/Word belgesi değil.";
+    }
+  }
+
+  if (Object.keys(errors).length || !cvBuf || !phone || !line) {
+    return NextResponse.json({ error: "Lütfen işaretli alanları kontrol et.", errors }, { status: 422 });
+  }
+
+  const id = randomUUID();
+  const now = new Date().toISOString();
+  const app: Application = {
+    id,
+    firstName,
+    lastName,
+    email,
+    phone,
+    businessLine: line.id,
+    role: role || "Genel Başvuru",
+    city,
+    linkedin: linkedin || undefined,
+    message: message || undefined,
+    cv: {
+      originalName: (cv as File).name.slice(0, 120),
+      storedName: `${id}.${ext}`,
+      size: cvBuf.length,
+      mimeType: ALLOWED[ext as keyof typeof ALLOWED],
+    },
+    status: "new",
+    notes: "",
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  await createApplication(app, cvBuf);
+  return NextResponse.json({ ok: true, id }, { status: 201 });
+}
