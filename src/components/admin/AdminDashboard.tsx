@@ -2,24 +2,14 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BUSINESS_LINES, GENERAL_LINE, businessLineName } from "@/lib/positions";
-import { STATUSES, statusMeta, type Application, type StatusId } from "@/lib/types";
+import type { Application } from "@/lib/types";
 import { UberWordmark } from "@/components/Logo";
-import { BUSINESS_ICONS, Download, FileIcon, Logout, Refresh, Search } from "@/components/icons";
+import { BUSINESS_ICONS, Download, FileIcon, Logout, Refresh, Search, Trash } from "@/components/icons";
 import { ApplicationDrawer } from "./ApplicationDrawer";
 
 const fmtDate = (iso: string) =>
   new Date(iso).toLocaleDateString("tr-TR", { day: "2-digit", month: "short", year: "numeric" });
 const initials = (a: Application) => (a.firstName[0] + a.lastName[0]).toLocaleUpperCase("tr-TR");
-
-export function StatusBadge({ status }: { status: string }) {
-  const s = statusMeta(status);
-  return (
-    <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold" style={{ background: s.color + "1f", color: s.id === "reviewing" ? "#8a5a00" : s.color }}>
-      <span className="size-1.5 rounded-full" style={{ background: s.color }} />
-      {s.label}
-    </span>
-  );
-}
 
 export function AdminDashboard() {
   const router = useRouter();
@@ -27,8 +17,9 @@ export function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
   const [line, setLine] = useState("all");
-  const [status, setStatus] = useState<"all" | StatusId>("all");
   const [selected, setSelected] = useState<Application | null>(null);
+  const [toDelete, setToDelete] = useState<Application | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -45,18 +36,17 @@ export function AdminDashboard() {
     const term = q.trim().toLocaleLowerCase("tr-TR");
     return items.filter((a) => {
       if (line !== "all" && a.businessLine !== line) return false;
-      if (status !== "all" && a.status !== status) return false;
       if (!term) return true;
       return [a.firstName, a.lastName, a.email, a.phone, a.role, a.city].join(" ").toLocaleLowerCase("tr-TR").includes(term);
     });
-  }, [items, q, line, status]);
+  }, [items, q, line]);
 
   const stats = useMemo(() => {
     const weekAgo = Date.now() - 7 * 864e5;
     return {
       total: items.length,
-      new: items.filter((a) => a.status === "new").length,
-      interview: items.filter((a) => a.status === "interview").length,
+      unrouted: items.filter((a) => a.businessLine === GENERAL_LINE).length,
+      today: items.filter((a) => new Date(a.createdAt).toDateString() === new Date().toDateString()).length,
       week: items.filter((a) => new Date(a.createdAt).getTime() > weekAgo).length,
     };
   }, [items]);
@@ -80,9 +70,16 @@ export function AdminDashboard() {
     setItems((xs) => xs.map((x) => (x.id === a.id ? a : x)));
     setSelected(a);
   }
-  function onDeleted(id: string) {
-    setItems((xs) => xs.filter((x) => x.id !== id));
-    setSelected(null);
+  async function confirmDelete() {
+    if (!toDelete) return;
+    setDeleting(true);
+    const res = await fetch(`/api/admin/applications/${toDelete.id}`, { method: "DELETE" });
+    setDeleting(false);
+    if (res.ok) {
+      setItems((xs) => xs.filter((x) => x.id !== toDelete.id));
+      if (selected?.id === toDelete.id) setSelected(null);
+      setToDelete(null);
+    }
   }
 
   return (
@@ -119,8 +116,8 @@ export function AdminDashboard() {
         <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           {[
             { label: "Toplam başvuru", value: stats.total, dark: true },
-            { label: "Yeni başvuru", value: stats.new, dot: "#276EF1" },
-            { label: "Mülakat aşamasında", value: stats.interview, dot: "#7356BF" },
+            { label: "Yönlendirilmedi", value: stats.unrouted, dot: "#AFAFAF" },
+            { label: "Bugün gelen", value: stats.today, dot: "#276EF1" },
             { label: "Son 7 gün", value: stats.week, dot: "#06C167" },
           ].map((s) => (
             <div key={s.label} className={`rounded-2xl p-4 sm:p-6 ${s.dark ? "bg-black text-white" : "bg-white"}`}>
@@ -162,20 +159,8 @@ export function AdminDashboard() {
             {BUSINESS_LINES.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
           </select>
         </div>
-        <div className="-mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">
-          {[{ id: "all", label: "Tümü" }, ...STATUSES].map((s) => {
-            const count = s.id === "all" ? items.length : items.filter((a) => a.status === s.id).length;
-            const active = status === s.id;
-            return (
-              <button key={s.id} onClick={() => setStatus(s.id as typeof status)} className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition ${active ? "bg-black text-white" : "bg-white hover:bg-uber-gray-100"}`}>
-                {s.label} <span className={active ? "text-uber-gray-400" : "text-uber-gray-600"}>{count}</span>
-              </button>
-            );
-          })}
-        </div>
-
         {/* Liste */}
-        <div className="mt-4 overflow-hidden rounded-2xl bg-white">
+        <div className="mt-3 overflow-hidden rounded-2xl bg-white">
           {loading && !items.length ? (
             <div className="space-y-px">{[0, 1, 2, 3].map((i) => <div key={i} className="h-[72px] animate-pulse bg-uber-gray-50" />)}</div>
           ) : !filtered.length ? (
@@ -195,7 +180,7 @@ export function AdminDashboard() {
                     <th className="px-4 py-3.5 font-medium">Telefon</th>
                     <th className="px-4 py-3.5 font-medium">Şehir</th>
                     <th className="px-4 py-3.5 font-medium">Tarih</th>
-                    <th className="px-6 py-3.5 font-medium">Durum</th>
+                    <th className="w-16 px-6 py-3.5"><span className="sr-only">Sil</span></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-uber-gray-100">
@@ -229,7 +214,16 @@ export function AdminDashboard() {
                         <td className="whitespace-nowrap px-4 py-4 text-sm tabular-nums">{a.phone}</td>
                         <td className="px-4 py-4 text-sm">{a.city}</td>
                         <td className="whitespace-nowrap px-4 py-4 text-sm text-uber-gray-600">{fmtDate(a.createdAt)}</td>
-                        <td className="px-6 py-4"><StatusBadge status={a.status} /></td>
+                        <td className="px-6 py-4 text-right">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setToDelete(a); }}
+                            className="grid size-9 place-items-center rounded-full text-uber-gray-600 transition hover:bg-uber-red/10 hover:text-uber-red"
+                            aria-label={`${a.firstName} ${a.lastName} başvurusunu sil`}
+                            title="Başvuruyu sil"
+                          >
+                            <Trash className="size-[18px]" />
+                          </button>
+                        </td>
                       </tr>
                     );
                   })}
@@ -239,17 +233,21 @@ export function AdminDashboard() {
               {/* Mobil kartlar */}
               <ul className="divide-y divide-uber-gray-100 md:hidden">
                 {filtered.map((a) => (
-                  <li key={a.id}>
-                    <button onClick={() => setSelected(a)} className="flex w-full items-start gap-3 px-4 py-4 text-left active:bg-uber-gray-50">
+                  <li key={a.id} className="flex items-center">
+                    <button onClick={() => setSelected(a)} className="flex min-w-0 flex-1 items-start gap-3 py-4 pl-4 pr-2 text-left active:bg-uber-gray-50">
                       <span className="grid size-11 shrink-0 place-items-center rounded-full bg-black text-sm font-semibold text-white">{initials(a)}</span>
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-start justify-between gap-2">
-                          <p className="truncate font-semibold">{a.firstName} {a.lastName}</p>
-                          <StatusBadge status={a.status} />
-                        </div>
+                        <p className="truncate font-semibold">{a.firstName} {a.lastName}</p>
                         <p className="truncate text-sm">{businessLineName(a.businessLine)}</p>
                         <p className="mt-1 text-[13px] text-uber-gray-600">{a.city} · {fmtDate(a.createdAt)}</p>
                       </div>
+                    </button>
+                    <button
+                      onClick={() => setToDelete(a)}
+                      className="mr-3 grid size-10 shrink-0 place-items-center rounded-full text-uber-gray-600 active:bg-uber-red/10 active:text-uber-red"
+                      aria-label={`${a.firstName} ${a.lastName} başvurusunu sil`}
+                    >
+                      <Trash className="size-5" />
                     </button>
                   </li>
                 ))}
@@ -260,7 +258,27 @@ export function AdminDashboard() {
         {!!filtered.length && <p className="mt-3 text-sm text-uber-gray-600">{filtered.length} başvuru gösteriliyor</p>}
       </main>
 
-      {selected && <ApplicationDrawer app={selected} onClose={() => setSelected(null)} onUpdated={onUpdated} onDeleted={onDeleted} />}
+      {selected && <ApplicationDrawer app={selected} onClose={() => setSelected(null)} onUpdated={onUpdated} />}
+
+      {/* Silme onayı */}
+      {toDelete && (
+        <div className="fixed inset-0 z-[60] flex items-end justify-center p-4 sm:items-center" role="alertdialog" aria-modal="true" aria-labelledby="del-title">
+          <div className="absolute inset-0 bg-black/50" onClick={() => !deleting && setToDelete(null)} />
+          <div className="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
+            <span className="grid size-12 place-items-center rounded-full bg-uber-red/10 text-uber-red"><Trash className="size-6" /></span>
+            <h2 id="del-title" className="mt-4 text-xl font-bold">Başvuru silinsin mi?</h2>
+            <p className="mt-2 text-[15px] text-uber-gray-600">
+              <strong className="text-black">{toDelete.firstName} {toDelete.lastName}</strong> adlı adayın başvurusu ve CV&apos;si kalıcı olarak silinecek. Bu işlem geri alınamaz.
+            </p>
+            <div className="mt-6 flex gap-2">
+              <button onClick={() => setToDelete(null)} disabled={deleting} className="btn-secondary flex-1 py-3">Vazgeç</button>
+              <button onClick={confirmDelete} disabled={deleting} className="inline-flex flex-1 items-center justify-center rounded-lg bg-uber-red py-3 text-[15px] font-medium text-white transition hover:opacity-90 disabled:opacity-60">
+                {deleting ? "Siliniyor…" : "Sil"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

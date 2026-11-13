@@ -1,26 +1,23 @@
 "use client";
 import { useEffect, useState } from "react";
 import { BUSINESS_LINES, GENERAL_LINE, businessLineName } from "@/lib/positions";
-import { STATUSES, type Application, type StatusId } from "@/lib/types";
-import { Close, Download, Eye, FileIcon, Linkedin, Mail, Phone, Pin, Trash } from "@/components/icons";
+import type { Application } from "@/lib/types";
+import { Close, Download, Eye, FileIcon, Linkedin, Mail, Phone, Pin } from "@/components/icons";
 
 type Props = {
   app: Application;
   onClose: () => void;
   onUpdated: (a: Application) => void;
-  onDeleted: (id: string) => void;
 };
 
-export function ApplicationDrawer({ app, onClose, onUpdated, onDeleted }: Props) {
+export function ApplicationDrawer({ app, onClose, onUpdated }: Props) {
   const [notes, setNotes] = useState(app.notes);
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState<number | null>(null);
-  const [confirmDelete, setConfirmDelete] = useState(false);
   const [preview, setPreview] = useState(false);
 
   useEffect(() => {
     setNotes(app.notes);
-    setConfirmDelete(false);
     setPreview(false);
   }, [app.id, app.notes]);
 
@@ -34,7 +31,7 @@ export function ApplicationDrawer({ app, onClose, onUpdated, onDeleted }: Props)
     };
   }, [onClose]);
 
-  async function patch(body: { status?: StatusId; notes?: string; businessLine?: string }) {
+  async function patch(body: { notes?: string; businessLine?: string }) {
     setSaving(true);
     const res = await fetch(`/api/admin/applications/${app.id}`, {
       method: "PATCH",
@@ -46,11 +43,6 @@ export function ApplicationDrawer({ app, onClose, onUpdated, onDeleted }: Props)
       onUpdated((await res.json()).item);
       if (body.notes !== undefined) setSavedAt(Date.now());
     }
-  }
-
-  async function remove() {
-    const res = await fetch(`/api/admin/applications/${app.id}`, { method: "DELETE" });
-    if (res.ok) onDeleted(app.id);
   }
 
   const isPdf = app.cv.mimeType === "application/pdf";
@@ -83,22 +75,6 @@ export function ApplicationDrawer({ app, onClose, onUpdated, onDeleted }: Props)
               WhatsApp
             </a>
           </div>
-
-          {/* durum */}
-          <section className="mt-7">
-            <h3 className="text-sm font-semibold">Durum</h3>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {STATUSES.map((s) => {
-                const active = app.status === s.id;
-                return (
-                  <button key={s.id} disabled={saving} onClick={() => !active && patch({ status: s.id })}
-                    className={`inline-flex items-center gap-2 rounded-full border-2 px-3.5 py-2 text-sm font-medium transition ${active ? "border-black bg-black text-white" : "border-uber-gray-200 hover:border-black"}`}>
-                    <span className="size-2 rounded-full" style={{ background: s.color }} /> {s.label}
-                  </button>
-                );
-              })}
-            </div>
-          </section>
 
           {/* yönlendirme */}
           <section className="mt-7">
@@ -171,23 +147,6 @@ export function ApplicationDrawer({ app, onClose, onUpdated, onDeleted }: Props)
               Notu kaydet
             </button>
           </section>
-        </div>
-
-        {/* alt bar */}
-        <div className="border-t border-uber-gray-100 px-5 py-4 sm:px-8">
-          {confirmDelete ? (
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <p className="flex-1 text-sm">Başvuru ve CV kalıcı olarak silinsin mi?</p>
-              <div className="flex gap-2">
-                <button onClick={() => setConfirmDelete(false)} className="btn-secondary flex-1 px-4 py-2.5 text-sm">Vazgeç</button>
-                <button onClick={remove} className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-uber-red px-4 py-2.5 text-sm font-medium text-white hover:opacity-90">Sil</button>
-              </div>
-            </div>
-          ) : (
-            <button onClick={() => setConfirmDelete(true)} className="inline-flex items-center gap-2 text-sm font-medium text-uber-red hover:underline">
-              <Trash className="size-4" /> Başvuruyu sil
-            </button>
-          )}
         </div>
       </aside>
     </div>

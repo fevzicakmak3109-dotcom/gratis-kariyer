@@ -17,11 +17,12 @@ Uber'in Türkiye'deki iş kolları için hazırlanmış, **Next.js 15 (App Route
 
 ### Admin paneli (`/admin`)
 - HMAC imzalı, `httpOnly` çerezle oturum; middleware ile `/admin` ve `/api/admin/*` korumalı
-- Özet kartları (toplam, yeni, mülakat, son 7 gün) ve ekiplere yönlendirme grafiği
+- Özet kartları (toplam, yönlendirilmemiş, bugün, son 7 gün) ve ekiplere yönlendirme grafiği
 - **Ekip yönlendirme**: genel başvuruyu CV'ye göre uygun iş koluna yönlendirme
-- Arama, iş kolu ve durum filtreleri
+- Arama ve ekip filtresi
 - Masaüstünde tablo, mobilde kart görünümü
-- Başvuru detayı: tek tıkla arama / e-posta / WhatsApp, **CV önizleme ve indirme**, durum yönetimi (Yeni → İnceleniyor → Mülakat → Teklif / Olumsuz), İK notları, silme
+- Başvuru detayı: tek tıkla arama / e-posta / WhatsApp, **CV önizleme ve indirme**, İK notları
+- Tablodaki her satırın sağındaki ikonla, onay alarak başvuru ve CV silme
 - **CSV dışa aktarma** (Excel uyumlu, Türkçe karakterli)
 
 ## Kurulum
@@ -62,7 +63,7 @@ src/
   lib/
     auth.ts                          Web Crypto HMAC oturum (edge + node)
     storage.ts                       depolama katmanı (Supabase / yerel dosya)
-    positions.ts, types.ts           iş kolları, durumlar
+    positions.ts, types.ts           iş kolları, veri tipleri
   middleware.ts                      admin koruması
 supabase/schema.sql                  tablo, indeks ve bucket kurulumu
 public/uber-kariyer-afis.svg         kampanya afişi

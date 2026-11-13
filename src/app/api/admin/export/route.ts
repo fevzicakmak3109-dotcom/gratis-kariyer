@@ -1,6 +1,5 @@
 import { listApplications } from "@/lib/storage";
 import { businessLineName } from "@/lib/positions";
-import { statusMeta } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -13,7 +12,7 @@ const cell = (v: unknown) => {
 
 export async function GET() {
   const items = await listApplications();
-  const header = ["Tarih", "Ad", "Soyad", "E-posta", "Telefon", "Yönlendirilen Ekip", "Başvuru", "Şehir", "LinkedIn", "Durum", "Not"];
+  const header = ["Tarih", "Ad", "Soyad", "E-posta", "Telefon", "Yönlendirilen Ekip", "Başvuru", "Şehir", "LinkedIn", "Not"];
   const rows = items.map((a) =>
     [
       new Date(a.createdAt).toLocaleString("tr-TR"),
@@ -25,7 +24,6 @@ export async function GET() {
       a.role,
       a.city,
       a.linkedin ?? "",
-      statusMeta(a.status).label,
       a.notes,
     ].map(cell).join(";"),
   );
