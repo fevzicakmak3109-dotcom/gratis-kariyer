@@ -8,3 +8,6 @@ next-env.d.ts
 .DS_Store
 # başvuru verileri (KVKK) – repoya girmez
 data/
+
+# Vercel ortam değişkenleri (gizli değerler içerir)
+VERCEL_ENV.md
