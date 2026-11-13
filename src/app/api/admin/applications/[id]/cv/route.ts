@@ -6,7 +6,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   const { id } = await params;
   const app = await getApplication(id);
   if (!app) return new Response("Bulunamadı", { status: 404 });
-  const file = await readCv(app.cv.storedName).catch(() => null);
+  const file = await readCv(app).catch(() => null);
   if (!file) return new Response("CV bulunamadı", { status: 404 });
   const download = new URL(req.url).searchParams.has("download");
   const ext = app.cv.storedName.split(".").pop();

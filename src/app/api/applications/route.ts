@@ -111,6 +111,11 @@ export async function POST(req: Request) {
     updatedAt: now,
   };
 
-  await createApplication(app, cvBuf);
+  try {
+    await createApplication(app, cvBuf);
+  } catch (e) {
+    console.error("Başvuru kaydedilemedi", e);
+    return NextResponse.json({ error: "Başvurun şu an kaydedilemedi, lütfen biraz sonra tekrar dene." }, { status: 500 });
+  }
   return NextResponse.json({ ok: true, id }, { status: 201 });
 }

@@ -1,11 +1,11 @@
 // Demo verisi: admin panelini örnek başvurularla doldurur.  Kullanım: npm run seed
+// .env.local içinde Supabase bilgileri varsa Supabase'e, yoksa data/ klasörüne yazar.
 import { promises as fs } from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
+import { createClient } from "@supabase/supabase-js";
 
-const DATA = process.env.DATA_DIR ?? path.join(process.cwd(), "data");
-const CV = path.join(DATA, "cv");
-await fs.mkdir(CV, { recursive: true });
+try { process.loadEnvFile(".env.local"); } catch {}
 
 function pdf(text) {
   const stream = `BT /F1 20 Tf 72 720 Td (${text}) Tj ET`;
@@ -25,6 +25,8 @@ function pdf(text) {
   return Buffer.from(out, "latin1");
 }
 
+const ascii = (s) => s.toLowerCase().replace(/ı/g, "i").replace(/ş/g, "s").replace(/ç/g, "c").replace(/ö/g, "o").replace(/ü/g, "u").replace(/ğ/g, "g").replace(/i̇/g, "i");
+
 const people = [
   ["Elif", "Yıldız", "tech-hub", "Yazılım Mühendisi", "İstanbul", "interview", "Go ve dağıtık sistemlerde 5 yıl deneyim."],
   ["Mert", "Kaya", "uber-eats", "Şehir Operasyon Uzmanı", "Ankara", "new", ""],
@@ -41,23 +43,43 @@ const items = people.map(([fn, ln, line, role, city, status, msg], i) => {
   const created = new Date(Date.now() - i * 1.3 * 864e5).toISOString();
   return {
     id, firstName: fn, lastName: ln,
-    email: `${fn}.${ln}`.toLowerCase().replace(/ı/g, "i").replace(/ş/g, "s").replace(/ç/g, "c").replace(/ö/g, "o").replace(/ü/g, "u").replace(/ğ/g, "g") + "@example.com",
+    email: `${ascii(fn)}.${ascii(ln)}@example.com`,
     phone: `+90 5${30 + i} ${100 + i * 7} ${10 + i} ${20 + i}`,
     businessLine: line, role, city,
-    linkedin: i % 2 ? undefined : `https://linkedin.com/in/demo-${i}`,
-    message: msg || undefined,
+    ...(i % 2 ? {} : { linkedin: `https://linkedin.com/in/demo-${i}` }),
+    ...(msg ? { message: msg } : {}),
     cv: { originalName: `${fn}_${ln}_CV.pdf`, storedName: `${id}.pdf`, size: 0, mimeType: "application/pdf" },
     status, notes: status === "interview" ? "Teknik mülakat 18 Kasım 14:00." : "",
     createdAt: created, updatedAt: created,
   };
 });
 
-for (const a of items) {
-  const buf = pdf(`${a.firstName} ${a.lastName} - Demo CV`.normalize("NFD").replace(/[^\x20-\x7e]/g, ""));
-  a.cv.size = buf.length;
-  await fs.writeFile(path.join(CV, a.cv.storedName), buf);
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (url && key) {
+  const sb = createClient(url, key, { auth: { persistSession: false } });
+  const bucket = process.env.SUPABASE_CV_BUCKET ?? "uber-cvs";
+  for (const a of items) {
+    const buf = pdf(`${ascii(a.firstName)} ${ascii(a.lastName)} - Demo CV`);
+    a.cv.size = buf.length;
+    const up = await sb.storage.from(bucket).upload(a.cv.storedName, buf, { contentType: "application/pdf" });
+    if (up.error) throw up.error;
+  }
+  const { error } = await sb.from("fs_docs").insert(items.map((a) => ({ collection: "uber_applications", id: a.id, data: a })));
+  if (error) throw error;
+  console.log(`${items.length} demo başvuru Supabase'e eklendi (fs_docs / uber_applications).`);
+} else {
+  const DATA = process.env.DATA_DIR ?? path.join(process.cwd(), "data");
+  const CV = path.join(DATA, "cv");
+  await fs.mkdir(CV, { recursive: true });
+  for (const a of items) {
+    const buf = pdf(`${ascii(a.firstName)} ${ascii(a.lastName)} - Demo CV`);
+    a.cv.size = buf.length;
+    await fs.writeFile(path.join(CV, a.cv.storedName), buf);
+  }
+  const file = path.join(DATA, "applications.json");
+  const existing = JSON.parse(await fs.readFile(file, "utf8").catch(() => "[]"));
+  await fs.writeFile(file, JSON.stringify([...existing, ...items], null, 2));
+  console.log(`${items.length} demo başvuru eklendi → ${file}`);
 }
-const file = path.join(DATA, "applications.json");
-const existing = JSON.parse(await fs.readFile(file, "utf8").catch(() => "[]"));
-await fs.writeFile(file, JSON.stringify([...existing, ...items], null, 2));
-console.log(`${items.length} demo başvuru eklendi → ${file}`);

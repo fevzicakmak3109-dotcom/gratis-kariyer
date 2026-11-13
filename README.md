@@ -1,6 +1,6 @@
 # Uber Türkiye Kariyer · İş Fırsatları Sayfası
 
-Uber'in Türkiye'deki iş kolları için hazırlanmış, **Next.js 15 (App Router) + TypeScript + Tailwind CSS v4** ile yazılmış tek sayfalık (one-page) kariyer sitesi ve başvuruları takip etmek için **kullanıcı adı / şifre korumalı admin paneli**.
+Uber'in Türkiye'deki iş kolları için hazırlanmış, **Next.js 15 (App Router) + TypeScript + Tailwind CSS v4 + Supabase** ile yazılmış tek sayfalık (one-page) kariyer sitesi ve başvuruları takip etmek için **kullanıcı adı / şifre korumalı admin paneli**.
 
 > Bu proje bir aday case çalışmasıdır; Uber'in resmi sitesi değildir.
 
@@ -27,7 +27,8 @@ Uber'in Türkiye'deki iş kolları için hazırlanmış, **Next.js 15 (App Route
 
 ```bash
 npm install
-cp .env.example .env.local   # admin bilgilerini değiştir
+cp .env.example .env.local   # Supabase ve admin bilgilerini gir
+# supabase/schema.sql dosyasını Supabase SQL Editor'de bir kez çalıştır
 npm run seed                 # (isteğe bağlı) panele 8 demo başvuru ekler
 npm run dev
 ```
@@ -40,7 +41,10 @@ npm run dev
 | `ADMIN_USERNAME` | Admin kullanıcı adı | `admin` |
 | `ADMIN_PASSWORD` | Admin şifresi | `Uber2026!` |
 | `ADMIN_SESSION_SECRET` | Oturum çerezini imzalayan gizli anahtar | geliştirme değeri |
-| `DATA_DIR` | Başvuruların ve CV'lerin tutulduğu klasör | `./data` |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase proje adresi | – |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role anahtarı (gizli, yalnızca sunucuda) | – |
+| `SUPABASE_CV_BUCKET` | CV'lerin tutulduğu private bucket | `uber-cvs` |
+| `DATA_DIR` | Supabase tanımlı değilse kullanılan yerel klasör | `./data` |
 
 > Canlıya alırken varsayılan şifreyi ve `ADMIN_SESSION_SECRET` değerini mutlaka değiştir.
 
@@ -56,14 +60,22 @@ src/
   components/                        Hero, HeroArt, BusinessLines, ApplicationForm, admin/...
   lib/
     auth.ts                          Web Crypto HMAC oturum (edge + node)
-    storage.ts                       depolama katmanı
+    storage.ts                       depolama katmanı (Supabase / yerel dosya)
     positions.ts, types.ts           iş kolları, durumlar
   middleware.ts                      admin koruması
+supabase/schema.sql                  tablo, indeks ve bucket kurulumu
 public/uber-kariyer-afis.svg         kampanya afişi
 public/uber-kariyer-banner.svg       LinkedIn banner
 ```
 
-**Depolama:** Case kapsamında bağımlılıksız olması için başvurular `data/applications.json`, CV'ler `data/cv/` altında tutuluyor (repoya girmez). `lib/storage.ts` tek bir arayüz sunduğundan, Vercel gibi sunucusuz ortamlarda aynı fonksiyonlar Postgres/Supabase + S3/Vercel Blob ile değiştirilebilir.
+**Veritabanı (Supabase):**
+- Başvurular `fs_docs` tablosunda `uber_applications` koleksiyonunda JSONB belge olarak tutulur (`collection`, `id`, `data`).
+- CV'ler private `uber-cvs` storage bucket'ındadır. Bucket herkese kapalıdır; CV'ler yalnızca giriş yapmış admin üzerinden, sunucu aracılığıyla açılır.
+- Tabloda RLS açıktır, `anon` / `authenticated` rollerinin erişimi yoktur. Uygulama tüm işlemleri sunucuda service role anahtarıyla yapar; anahtar tarayıcıya gönderilmez.
+- Kurulum SQL'i: [`supabase/schema.sql`](supabase/schema.sql)
+- Supabase değişkenleri tanımlı değilse `lib/storage.ts` otomatik olarak yerel `data/` klasörüne geçer (geliştirme için).
+
+Supabase panelinde başvuruları görmek için: **Table Editor → fs_docs**, `collection = uber_applications` filtresi. CV'ler: **Storage → uber-cvs**.
 
 ## Tasarım
 
