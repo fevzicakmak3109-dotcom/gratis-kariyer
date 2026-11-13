@@ -9,6 +9,7 @@ import { ApplicationForm } from "@/components/ApplicationForm";
 import { Faq } from "@/components/Faq";
 import { Footer } from "@/components/Footer";
 import { MobileApplyButton } from "@/components/MobileApplyButton";
+import { VisitorPing } from "@/components/VisitorPing";
 
 export default function Home() {
   return (
@@ -26,6 +27,7 @@ export default function Home() {
       </main>
       <Footer />
       <MobileApplyButton />
+      <VisitorPing />
     </>
   );
 }

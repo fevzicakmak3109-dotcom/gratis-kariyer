@@ -17,6 +17,7 @@ Uber'in Türkiye'deki iş kolları için hazırlanmış, **Next.js 15 (App Route
 
 ### Admin paneli (`/admin`)
 - HMAC imzalı, `httpOnly` çerezle oturum; middleware ile `/admin` ve `/api/admin/*` korumalı
+- **Canlı ziyaretçi sayacı** (sağ üst): ana sayfa açıkken tarayıcı 30 sn'de bir hafif bir sinyal gönderir; panel 15 sn'de bir son 75 sn'deki ziyaretçileri sayar. Kişisel veri tutulmaz, sekme arka plandayken sinyal durur.
 - Özet kartları (toplam, yönlendirilmemiş, bugün, son 7 gün) ve ekiplere yönlendirme grafiği
 - **Ekip yönlendirme**: genel başvuruyu CV'ye göre uygun iş koluna yönlendirme
 - Arama ve ekip filtresi

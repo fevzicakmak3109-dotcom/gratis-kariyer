@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { BUSINESS_LINES, GENERAL_LINE, businessLineName, experienceLabel } from "@/lib/positions";
 import type { Application } from "@/lib/types";
 import { UberWordmark } from "@/components/Logo";
+import { LiveVisitors } from "./LiveVisitors";
 import { BUSINESS_ICONS, Download, FileIcon, Logout, Refresh, Search, Trash } from "@/components/icons";
 import { ApplicationDrawer } from "./ApplicationDrawer";
 
@@ -89,9 +90,10 @@ export function AdminDashboard() {
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-baseline gap-3">
             <UberWordmark className="text-2xl" />
-            <span className="text-sm font-medium text-uber-gray-400">İşe Alım Paneli</span>
+            <span className="hidden text-sm font-medium text-uber-gray-400 min-[400px]:inline">İşe Alım Paneli</span>
           </div>
           <div className="flex items-center gap-1 sm:gap-2">
+            <LiveVisitors />
             <a href="/" target="_blank" className="hidden rounded-full px-4 py-2 text-sm font-medium hover:bg-uber-gray-800 sm:inline-flex">Siteyi gör</a>
             <button onClick={logout} className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium hover:bg-uber-gray-800 sm:px-4">
               <Logout className="size-5" /> <span className="hidden sm:inline">Çıkış</span>

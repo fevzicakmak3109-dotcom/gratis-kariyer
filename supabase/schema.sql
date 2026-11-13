@@ -26,3 +26,7 @@ values ('uber-cvs', 'uber-cvs', false, 5242880, array[
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 ])
 on conflict (id) do nothing;
+
+-- Canlı ziyaretçi sayacı: `uber_presence` koleksiyonu (ziyaretçi başına tek satır,
+-- yalnızca rastgele oturum kimliği ve son görülme zamanı). Eski satırlar otomatik silinir.
+create index if not exists fs_uber_presence on public.fs_docs ((data ->> 'lastSeen')) where collection = 'uber_presence';
