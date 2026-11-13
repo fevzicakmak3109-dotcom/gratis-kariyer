@@ -8,6 +8,7 @@ import { Process } from "@/components/Process";
 import { ApplicationForm } from "@/components/ApplicationForm";
 import { Faq } from "@/components/Faq";
 import { Footer } from "@/components/Footer";
+import { MobileApplyButton } from "@/components/MobileApplyButton";
 
 export default function Home() {
   return (
@@ -24,6 +25,7 @@ export default function Home() {
         <Faq />
       </main>
       <Footer />
+      <MobileApplyButton />
     </>
   );
 }
