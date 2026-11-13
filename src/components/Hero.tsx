@@ -1,5 +1,5 @@
 import { HeroArt } from "./HeroArt";
-import { ArrowDown, ArrowRight } from "./icons";
+import { ArrowRight } from "./icons";
 
 const STATS = [
   { value: "$200M", label: "İstanbul teknoloji merkezi yatırımı" },
@@ -30,9 +30,6 @@ export function Hero() {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <a href="#basvuru" className="btn-light px-7 py-4 text-base">
               Hemen başvur <ArrowRight className="size-5" />
-            </a>
-            <a href="#is-kollari" className="inline-flex items-center justify-center gap-2 rounded-lg border border-uber-gray-600 px-7 py-4 text-base font-medium transition hover:bg-uber-gray-800">
-              İş kollarını keşfet <ArrowDown className="size-5" />
             </a>
           </div>
         </div>

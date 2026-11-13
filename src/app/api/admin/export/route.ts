@@ -13,7 +13,7 @@ const cell = (v: unknown) => {
 
 export async function GET() {
   const items = await listApplications();
-  const header = ["Tarih", "Ad", "Soyad", "E-posta", "Telefon", "İş Kolu", "Pozisyon", "Şehir", "LinkedIn", "Durum", "Not"];
+  const header = ["Tarih", "Ad", "Soyad", "E-posta", "Telefon", "Yönlendirilen Ekip", "Başvuru", "Şehir", "LinkedIn", "Durum", "Not"];
   const rows = items.map((a) =>
     [
       new Date(a.createdAt).toLocaleString("tr-TR"),

@@ -1,8 +1,8 @@
 const QA = [
   { q: "Hangi belgeleri hazırlamalıyım?", a: "Güncel bir CV (PDF, DOC veya DOCX, en fazla 5 MB) yeterli. İstersen LinkedIn profilini ve kısa bir ön yazı da ekleyebilirsin." },
-  { q: "Birden fazla iş koluna başvurabilir miyim?", a: "Evet. Her başvuru ayrı değerlendirilir; ancak en çok ilgini çeken alanla başlamanı öneririz. Ekibimiz uygun gördüğü diğer rollere de seni yönlendirebilir." },
+  { q: "Hangi iş koluna başvuracağımı nasıl seçeceğim?", a: "Seçmene gerek yok. Tek bir genel başvuru yapıyorsun; işe alım ekibimiz CV'ni ve deneyimini inceleyip seni en uygun iş koluna ve pozisyona yönlendiriyor." },
   { q: "Başvurumun sonucunu ne zaman öğrenirim?", a: "Ön değerlendirme genellikle 7 iş günü içinde tamamlanır. Sana e-posta ve telefonla ulaşırız." },
-  { q: "Kurye veya sürücü partner olmak için de bu formu mu kullanmalıyım?", a: "Partner fırsatları için de bu formu kullanabilirsin; ilgili iş kolunu ve pozisyonu seçmen yeterli. Ekibimiz seni doğru onboarding sürecine yönlendirir." },
+  { q: "Kurye veya sürücü partner olmak için de bu formu mu kullanmalıyım?", a: "Evet. Partner fırsatları için de aynı genel başvuru formunu kullanabilirsin; ön yazında belirtmen yeterli. Ekibimiz seni doğru onboarding sürecine yönlendirir." },
   { q: "Kişisel verilerim nasıl korunuyor?", a: "Verilerin 6698 sayılı KVKK kapsamında yalnızca işe alım süreci için işlenir ve yetkisiz kişilerle paylaşılmaz." },
 ];
 

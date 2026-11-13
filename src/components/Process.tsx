@@ -1,6 +1,6 @@
 const STEPS = [
   { n: "01", title: "Başvur", text: "Formu doldur ve CV'ni yükle. 3 dakikadan kısa sürer." },
-  { n: "02", title: "Ön değerlendirme", text: "Ekibimiz başvurunu inceler, 7 iş günü içinde dönüş yapar." },
+  { n: "02", title: "Ön değerlendirme", text: "Ekibimiz CV'ni inceler, seni en uygun iş koluna yönlendirir ve 7 iş günü içinde dönüş yapar." },
   { n: "03", title: "Mülakatlar", text: "İK görüşmesi ve ekiple tanışma. Teknik rollerde vaka çalışması." },
   { n: "04", title: "Hoş geldin", text: "Teklif ve onboarding. Uber yolculuğun başlıyor." },
 ];

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { businessLineName } from "@/lib/positions";
+import { BUSINESS_LINES, GENERAL_LINE, businessLineName } from "@/lib/positions";
 import { STATUSES, type Application, type StatusId } from "@/lib/types";
 import { Close, Download, Eye, FileIcon, Linkedin, Mail, Phone, Pin, Trash } from "@/components/icons";
 
@@ -34,7 +34,7 @@ export function ApplicationDrawer({ app, onClose, onUpdated, onDeleted }: Props)
     };
   }, [onClose]);
 
-  async function patch(body: { status?: StatusId; notes?: string }) {
+  async function patch(body: { status?: StatusId; notes?: string; businessLine?: string }) {
     setSaving(true);
     const res = await fetch(`/api/admin/applications/${app.id}`, {
       method: "PATCH",
@@ -98,6 +98,21 @@ export function ApplicationDrawer({ app, onClose, onUpdated, onDeleted }: Props)
                 );
               })}
             </div>
+          </section>
+
+          {/* yönlendirme */}
+          <section className="mt-7">
+            <h3 className="text-sm font-semibold">Yönlendirilen ekip</h3>
+            <p className="mt-0.5 text-[13px] text-uber-gray-600">Adayı CV&apos;sine göre en uygun iş koluna yönlendir.</p>
+            <select
+              value={app.businessLine}
+              disabled={saving}
+              onChange={(e) => patch({ businessLine: e.target.value })}
+              className="input select mt-3"
+            >
+              <option value={GENERAL_LINE}>Henüz yönlendirilmedi</option>
+              {BUSINESS_LINES.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
+            </select>
           </section>
 
           {/* bilgiler */}

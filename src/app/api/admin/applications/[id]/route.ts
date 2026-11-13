@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { deleteApplication, updateApplication } from "@/lib/storage";
 import { STATUSES, type StatusId } from "@/lib/types";
+import { BUSINESS_LINES, GENERAL_LINE } from "@/lib/positions";
 
 export const runtime = "nodejs";
 
@@ -8,12 +9,17 @@ type Ctx = { params: Promise<{ id: string }> };
 
 export async function PATCH(req: Request, { params }: Ctx) {
   const { id } = await params;
-  const body = (await req.json().catch(() => ({}))) as { status?: string; notes?: string };
-  const patch: { status?: StatusId; notes?: string } = {};
+  const body = (await req.json().catch(() => ({}))) as { status?: string; notes?: string; businessLine?: string };
+  const patch: { status?: StatusId; notes?: string; businessLine?: string } = {};
   if (body.status !== undefined) {
     if (!STATUSES.some((s) => s.id === body.status))
       return NextResponse.json({ error: "Geçersiz durum" }, { status: 400 });
     patch.status = body.status as StatusId;
+  }
+  if (body.businessLine !== undefined) {
+    if (body.businessLine !== GENERAL_LINE && !BUSINESS_LINES.some((b) => b.id === body.businessLine))
+      return NextResponse.json({ error: "Geçersiz iş kolu" }, { status: 400 });
+    patch.businessLine = body.businessLine;
   }
   if (body.notes !== undefined) patch.notes = String(body.notes).slice(0, 2000);
   const updated = await updateApplication(id, patch);

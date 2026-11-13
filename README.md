@@ -8,16 +8,17 @@ Uber'in Türkiye'deki iş kolları için hazırlanmış, **Next.js 15 (App Route
 
 ### Kariyer sayfası (`/`)
 - **Hero banner**: İstanbul haritası, Boğaz, Uber'in kare başlangıç / yuvarlak varış rota dili ve iş kollarını anlatan hareketli kartlar
-- **İş kolları**: Uber Tech Hub İstanbul, Trendyol Go by Uber Eats, Uber Mobility (Uber Taksi), Uber for Business, Operasyon & Destek, Kurumsal Fonksiyonlar. Bir pozisyona tıklayınca form o alana göre otomatik doluyor
-- **Kampanya afişi (1080×1350) ve LinkedIn banner'ı (1584×396)**: SVG olarak tasarlandı, sayfadan indirilebilir (`public/`)
-- **Genel başvuru formu**: ad, soyad, e-posta, **cep telefonu** (05XX XXX XX XX maskesi), iş kolu, pozisyon, şehir, LinkedIn, ön yazı, **CV yükleme** (sürükle-bırak, PDF/DOC/DOCX, en fazla 5 MB), KVKK onayı
+- **İş kolları**: Uber Tech Hub İstanbul, Trendyol Go by Uber Eats, Uber Mobility (Uber Taksi), Uber for Business, Operasyon & Destek, Kurumsal Fonksiyonlar tanıtılıyor. Aday iş kolu seçmiyor: **"Sen başvur, seni en uygun ekibe biz yönlendirelim."**
+- **Kampanya afişi (1080×1350)**: SVG olarak tasarlandı (`public/uber-kariyer-afis.svg`)
+- **Genel başvuru formu**: ad, soyad, e-posta, **cep telefonu** (05XX XXX XX XX maskesi), şehir, LinkedIn, ön yazı, **CV yükleme** (sürükle-bırak, PDF/DOC/DOCX, en fazla 5 MB), KVKK onayı
 - İstemci ve sunucu tarafında doğrulama, dosya imzası (magic bytes) kontrolü, bot tuzağı (honeypot)
 - Neden Uber, 4 adımlı başvuru süreci, SSS
 - Mobil ve masaüstü için responsive, `prefers-reduced-motion` desteği
 
 ### Admin paneli (`/admin`)
 - HMAC imzalı, `httpOnly` çerezle oturum; middleware ile `/admin` ve `/api/admin/*` korumalı
-- Özet kartları (toplam, yeni, mülakat, son 7 gün) ve iş koluna göre dağılım grafiği
+- Özet kartları (toplam, yeni, mülakat, son 7 gün) ve ekiplere yönlendirme grafiği
+- **Ekip yönlendirme**: genel başvuruyu CV'ye göre uygun iş koluna yönlendirme
 - Arama, iş kolu ve durum filtreleri
 - Masaüstünde tablo, mobilde kart görünümü
 - Başvuru detayı: tek tıkla arama / e-posta / WhatsApp, **CV önizleme ve indirme**, durum yönetimi (Yeni → İnceleniyor → Mülakat → Teklif / Olumsuz), İK notları, silme
@@ -65,7 +66,6 @@ src/
   middleware.ts                      admin koruması
 supabase/schema.sql                  tablo, indeks ve bucket kurulumu
 public/uber-kariyer-afis.svg         kampanya afişi
-public/uber-kariyer-banner.svg       LinkedIn banner
 ```
 
 **Veritabanı (Supabase):**

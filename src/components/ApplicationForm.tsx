@@ -1,7 +1,6 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { BUSINESS_LINES, CITIES } from "@/lib/positions";
-import { SELECT_EVENT } from "./BusinessLines";
+import { useRef, useState } from "react";
+import { CITIES } from "@/lib/positions";
 import { ArrowRight, Check, Close, FileIcon, Lock, Upload } from "./icons";
 
 type Errors = Partial<Record<string, string>>;
@@ -25,7 +24,6 @@ function validate(f: FormData, cv: File | null): Errors {
   if (s("lastName").length < 2) e.lastName = "Soyadını gir.";
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s("email"))) e.email = "Geçerli bir e-posta adresi gir.";
   if (!/^05\d{9}$/.test(s("phone").replace(/\D/g, ""))) e.phone = "05XX XXX XX XX formatında bir cep telefonu gir.";
-  if (!s("businessLine")) e.businessLine = "Bir iş kolu seç.";
   if (!s("city")) e.city = "Bir şehir seç.";
   const li = s("linkedin");
   if (li && !/^https?:\/\/(www\.)?linkedin\.com\//i.test(li)) e.linkedin = "Bağlantı linkedin.com ile başlamalı.";
@@ -37,8 +35,6 @@ function validate(f: FormData, cv: File | null): Errors {
 export function ApplicationForm() {
   const formRef = useRef<HTMLFormElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
-  const [line, setLine] = useState("");
-  const [role, setRole] = useState("");
   const [phone, setPhone] = useState("");
   const [cv, setCv] = useState<File | null>(null);
   const [drag, setDrag] = useState(false);
@@ -46,19 +42,6 @@ export function ApplicationForm() {
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [serverError, setServerError] = useState("");
   const [name, setName] = useState("");
-
-  useEffect(() => {
-    const on = (ev: Event) => {
-      const { id, role } = (ev as CustomEvent<{ id: string; role?: string }>).detail;
-      setLine(id);
-      setRole(role ?? "");
-      setErrors((e) => ({ ...e, businessLine: undefined }));
-    };
-    window.addEventListener(SELECT_EVENT, on);
-    return () => window.removeEventListener(SELECT_EVENT, on);
-  }, []);
-
-  const roles = BUSINESS_LINES.find((b) => b.id === line)?.roles ?? [];
 
   function pickFile(f: File | undefined) {
     if (!f) return;
@@ -103,8 +86,6 @@ export function ApplicationForm() {
     formRef.current?.reset();
     setCv(null);
     setPhone("");
-    setLine("");
-    setRole("");
     setErrors({});
     setStatus("idle");
   }
@@ -127,10 +108,10 @@ export function ApplicationForm() {
             <p className="text-sm font-semibold uppercase tracking-[0.14em] text-uber-gray-400">Genel başvuru</p>
             <h2 className="mt-3 text-4xl font-bold tracking-[-0.03em] sm:text-[44px] sm:leading-[1.05]">Yolculuğun burada başlıyor.</h2>
             <p className="mt-4 text-[15px] leading-relaxed text-uber-gray-400">
-              Formu doldur, CV&apos;ni yükle. İşe alım ekibimiz başvurunu inceleyip en kısa sürede seninle iletişime geçecek.
+              Formu doldur, CV&apos;ni yükle. İşe alım ekibimiz başvurunu inceleyip seni en uygun ekibe yönlendirecek ve en kısa sürede seninle iletişime geçecek.
             </p>
             <ul className="mt-8 space-y-4 text-[15px]">
-              {["Ad, soyad ve iletişim bilgileri", "Cep telefonu numarası", "CV (PDF / DOC / DOCX, maks. 5 MB)", "İlgilendiğin iş kolu ve şehir"].map((t) => (
+              {["Ad, soyad ve iletişim bilgileri", "Cep telefonu numarası", "CV (PDF / DOC / DOCX, maks. 5 MB)", "Yaşadığın şehir"].map((t) => (
                 <li key={t} className="flex items-center gap-3">
                   <span className="grid size-6 shrink-0 place-items-center rounded-full bg-uber-gray-800"><Check className="size-3.5" /></span>
                   {t}
@@ -188,24 +169,6 @@ export function ApplicationForm() {
                     />
                   </div>
                   {err("phone")}
-                </div>
-                <div>
-                  <label htmlFor="businessLine" className="label">İş kolu *</label>
-                  <select id="businessLine" name="businessLine" className="input select"
-                    value={line} onChange={(e) => { setLine(e.target.value); setRole(""); }} {...aria("businessLine")}>
-                    <option value="" disabled>Seç</option>
-                    {BUSINESS_LINES.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
-                  </select>
-                  {err("businessLine")}
-                </div>
-                <div>
-                  <label htmlFor="role" className="label">Pozisyon</label>
-                  <select id="role" name="role" className="input select disabled:opacity-60"
-                    value={role} onChange={(e) => setRole(e.target.value)} disabled={!line} {...aria("role")}>
-                    <option value="">Genel başvuru</option>
-                    {roles.map((r) => <option key={r} value={r}>{r}</option>)}
-                  </select>
-                  {err("role")}
                 </div>
                 <div>
                   <label htmlFor="city" className="label">Şehir *</label>

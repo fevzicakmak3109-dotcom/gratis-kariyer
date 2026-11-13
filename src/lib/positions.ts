@@ -76,6 +76,10 @@ export const CITIES = [
   "Diğer",
 ] as const;
 
+/** Genel başvurular henüz bir ekibe yönlendirilmemiştir. */
+export const GENERAL_LINE = "general";
+
 export function businessLineName(id: string) {
+  if (id === GENERAL_LINE) return "Yönlendirilmedi";
   return BUSINESS_LINES.find((b) => b.id === id)?.name ?? id;
 }

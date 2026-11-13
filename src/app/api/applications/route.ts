@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { createApplication } from "@/lib/storage";
-import { BUSINESS_LINES, CITIES } from "@/lib/positions";
+import { CITIES, GENERAL_LINE } from "@/lib/positions";
 import type { Application } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -47,8 +47,6 @@ export async function POST(req: Request) {
   const lastName = str(form.get("lastName"), 60);
   const email = str(form.get("email"), 120).toLowerCase();
   const phoneRaw = str(form.get("phone"), 30);
-  const businessLine = str(form.get("businessLine"), 40);
-  const role = str(form.get("role"), 80);
   const city = str(form.get("city"), 40);
   const linkedin = str(form.get("linkedin"), 200);
   const message = str(form.get("message"), 1000);
@@ -60,9 +58,6 @@ export async function POST(req: Request) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) errors.email = "Geçerli bir e-posta adresi gir.";
   const phone = normalizePhone(phoneRaw);
   if (!phone) errors.phone = "05XX XXX XX XX formatında bir cep telefonu gir.";
-  const line = BUSINESS_LINES.find((b) => b.id === businessLine);
-  if (!line) errors.businessLine = "Bir iş kolu seç.";
-  else if (role && !line.roles.includes(role)) errors.role = "Geçerli bir pozisyon seç.";
   if (!(CITIES as readonly string[]).includes(city)) errors.city = "Bir şehir seç.";
   if (linkedin && !/^https?:\/\/(www\.)?linkedin\.com\//i.test(linkedin))
     errors.linkedin = "LinkedIn profil bağlantısı linkedin.com ile başlamalı.";
@@ -82,7 +77,7 @@ export async function POST(req: Request) {
     }
   }
 
-  if (Object.keys(errors).length || !cvBuf || !phone || !line) {
+  if (Object.keys(errors).length || !cvBuf || !phone) {
     return NextResponse.json({ error: "Lütfen işaretli alanları kontrol et.", errors }, { status: 422 });
   }
 
@@ -94,8 +89,8 @@ export async function POST(req: Request) {
     lastName,
     email,
     phone,
-    businessLine: line.id,
-    role: role || "Genel Başvuru",
+    businessLine: GENERAL_LINE,
+    role: "Genel Başvuru",
     city,
     linkedin: linkedin || undefined,
     message: message || undefined,

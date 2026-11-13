@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { BUSINESS_LINES, businessLineName } from "@/lib/positions";
+import { BUSINESS_LINES, GENERAL_LINE, businessLineName } from "@/lib/positions";
 import { STATUSES, statusMeta, type Application, type StatusId } from "@/lib/types";
 import { UberWordmark } from "@/components/Logo";
 import { BUSINESS_ICONS, Download, FileIcon, Logout, Refresh, Search } from "@/components/icons";
@@ -62,7 +62,11 @@ export function AdminDashboard() {
   }, [items]);
 
   const byLine = useMemo(
-    () => BUSINESS_LINES.map((b) => ({ ...b, count: items.filter((a) => a.businessLine === b.id).length })),
+    () =>
+      [{ id: GENERAL_LINE, name: "Yönlendirilmedi", accent: "#AFAFAF" }, ...BUSINESS_LINES].map((b) => ({
+        ...b,
+        count: items.filter((a) => a.businessLine === b.id).length,
+      })),
     [items],
   );
   const maxLine = Math.max(1, ...byLine.map((b) => b.count));
@@ -131,7 +135,8 @@ export function AdminDashboard() {
 
         {/* İş kolu dağılımı */}
         <div className="mt-4 rounded-2xl bg-white p-4 sm:p-6">
-          <p className="text-sm font-semibold">İş koluna göre dağılım</p>
+          <p className="text-sm font-semibold">Ekiplere yönlendirme</p>
+          <p className="mt-0.5 text-[13px] text-uber-gray-600">Genel başvuruları detay ekranından uygun iş koluna yönlendirebilirsin.</p>
           <div className="mt-4 grid gap-x-8 gap-y-3 md:grid-cols-2">
             {byLine.map((b) => (
               <button key={b.id} onClick={() => setLine(line === b.id ? "all" : b.id)} className="group flex items-center gap-3 text-left">
@@ -152,7 +157,8 @@ export function AdminDashboard() {
             <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="İsim, e-posta, telefon veya pozisyon ara" className="input bg-white pl-12" />
           </div>
           <select value={line} onChange={(e) => setLine(e.target.value)} className="input select bg-white lg:w-64">
-            <option value="all">Tüm iş kolları</option>
+            <option value="all">Tüm ekipler</option>
+            <option value={GENERAL_LINE}>Yönlendirilmedi</option>
             {BUSINESS_LINES.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
           </select>
         </div>
@@ -185,7 +191,7 @@ export function AdminDashboard() {
                 <thead className="border-b border-uber-gray-100 text-[13px] text-uber-gray-600">
                   <tr>
                     <th className="px-6 py-3.5 font-medium">Aday</th>
-                    <th className="px-4 py-3.5 font-medium">İş kolu / Pozisyon</th>
+                    <th className="px-4 py-3.5 font-medium">Yönlendirilen ekip</th>
                     <th className="px-4 py-3.5 font-medium">Telefon</th>
                     <th className="px-4 py-3.5 font-medium">Şehir</th>
                     <th className="px-4 py-3.5 font-medium">Tarih</th>
@@ -208,13 +214,17 @@ export function AdminDashboard() {
                           </div>
                         </td>
                         <td className="px-4 py-4">
-                          <div className="flex items-center gap-2.5">
-                            {Icon && <span className="grid size-7 shrink-0 place-items-center rounded-lg" style={{ background: b?.accent, color: b?.accent === "#FFC043" ? "#000" : "#fff" }}><Icon className="size-4" /></span>}
-                            <div className="min-w-0">
-                              <p className="truncate text-sm font-medium">{a.role}</p>
-                              <p className="truncate text-[12px] text-uber-gray-600">{businessLineName(a.businessLine)}</p>
+                          {b && Icon ? (
+                            <div className="flex items-center gap-2.5">
+                              <span className="grid size-7 shrink-0 place-items-center rounded-lg" style={{ background: b.accent, color: b.accent === "#FFC043" ? "#000" : "#fff" }}><Icon className="size-4" /></span>
+                              <div className="min-w-0">
+                                <p className="truncate text-sm font-medium">{b.name}</p>
+                                <p className="truncate text-[12px] text-uber-gray-600">{a.role}</p>
+                              </div>
                             </div>
-                          </div>
+                          ) : (
+                            <span className="inline-flex rounded-full bg-uber-gray-100 px-2.5 py-1 text-xs font-semibold text-uber-gray-600">Yönlendirilmedi</span>
+                          )}
                         </td>
                         <td className="whitespace-nowrap px-4 py-4 text-sm tabular-nums">{a.phone}</td>
                         <td className="px-4 py-4 text-sm">{a.city}</td>
@@ -237,7 +247,7 @@ export function AdminDashboard() {
                           <p className="truncate font-semibold">{a.firstName} {a.lastName}</p>
                           <StatusBadge status={a.status} />
                         </div>
-                        <p className="truncate text-sm">{a.role} · <span className="text-uber-gray-600">{businessLineName(a.businessLine)}</span></p>
+                        <p className="truncate text-sm">{businessLineName(a.businessLine)}</p>
                         <p className="mt-1 text-[13px] text-uber-gray-600">{a.city} · {fmtDate(a.createdAt)}</p>
                       </div>
                     </button>
