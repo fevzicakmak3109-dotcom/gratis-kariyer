@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { createApplication } from "@/lib/storage";
-import { CITIES, GENERAL_LINE } from "@/lib/positions";
+import { CITIES, EXPERIENCE_OPTIONS, GENERAL_LINE, NO_EXPERIENCE } from "@/lib/positions";
 import type { Application } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -50,6 +50,7 @@ export async function POST(req: Request) {
   const city = str(form.get("city"), 40);
   const linkedin = str(form.get("linkedin"), 200);
   const message = str(form.get("message"), 1000);
+  const experience = str(form.get("experience"), 10);
   const consent = form.get("consent") === "on" || form.get("consent") === "true";
   const cv = form.get("cv");
 
@@ -61,11 +62,15 @@ export async function POST(req: Request) {
   if (!(CITIES as readonly string[]).includes(city)) errors.city = "Bir şehir seç.";
   if (linkedin && !/^https?:\/\/(www\.)?linkedin\.com\//i.test(linkedin))
     errors.linkedin = "LinkedIn profil bağlantısı linkedin.com ile başlamalı.";
+  if (!EXPERIENCE_OPTIONS.some((e) => e.id === experience)) errors.experience = "Deneyim süreni seç.";
+  const needsCv = experience !== NO_EXPERIENCE;
   if (!consent) errors.consent = "Devam etmek için KVKK metnini onaylamalısın.";
 
   let cvBuf: Buffer | null = null;
   let ext = "";
-  if (!(cv instanceof File) || cv.size === 0) {
+  if (!needsCv) {
+    // Deneyimi olmayan adaylardan CV istemiyoruz; gönderilse bile yok sayılır.
+  } else if (!(cv instanceof File) || cv.size === 0) {
     errors.cv = "CV dosyanı yükle.";
   } else {
     ext = cv.name.split(".").pop()?.toLowerCase() ?? "";
@@ -77,7 +82,7 @@ export async function POST(req: Request) {
     }
   }
 
-  if (Object.keys(errors).length || !cvBuf || !phone) {
+  if (Object.keys(errors).length || (needsCv && !cvBuf) || !phone) {
     return NextResponse.json({ error: "Lütfen işaretli alanları kontrol et.", errors }, { status: 422 });
   }
 
@@ -94,12 +99,15 @@ export async function POST(req: Request) {
     city,
     linkedin: linkedin || undefined,
     message: message || undefined,
-    cv: {
-      originalName: (cv as File).name.slice(0, 120),
-      storedName: `${id}.${ext}`,
-      size: cvBuf.length,
-      mimeType: ALLOWED[ext as keyof typeof ALLOWED],
-    },
+    experience,
+    cv: cvBuf
+      ? {
+          originalName: (cv as File).name.slice(0, 120),
+          storedName: `${id}.${ext}`,
+          size: cvBuf.length,
+          mimeType: ALLOWED[ext as keyof typeof ALLOWED],
+        }
+      : null,
     status: "new",
     notes: "",
     createdAt: now,

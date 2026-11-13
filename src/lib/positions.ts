@@ -83,3 +83,17 @@ export function businessLineName(id: string) {
   if (id === GENERAL_LINE) return "Yönlendirilmedi";
   return BUSINESS_LINES.find((b) => b.id === id)?.name ?? id;
 }
+
+export const NO_EXPERIENCE = "none";
+export const EXPERIENCE_OPTIONS = [
+  { id: NO_EXPERIENCE, label: "Deneyimim yok" },
+  { id: "lt1", label: "1 yıldan az" },
+  { id: "1-3", label: "1–3 yıl" },
+  { id: "3-5", label: "3–5 yıl" },
+  { id: "5-10", label: "5–10 yıl" },
+  { id: "10+", label: "10 yıldan fazla" },
+] as const;
+
+export function experienceLabel(id?: string) {
+  return EXPERIENCE_OPTIONS.find((e) => e.id === id)?.label ?? "Belirtilmedi";
+}

@@ -1,5 +1,5 @@
 const QA = [
-  { q: "Hangi belgeleri hazırlamalıyım?", a: "Güncel bir CV (PDF, DOC veya DOCX, en fazla 5 MB) yeterli. İstersen LinkedIn profilini ve kısa bir ön yazı da ekleyebilirsin." },
+  { q: "Hangi belgeleri hazırlamalıyım?", a: "Deneyimin varsa güncel bir CV (PDF, DOC veya DOCX, en fazla 5 MB) yeterli. Hiç deneyimin yoksa CV istemiyoruz; kendinden kısaca bahsetmen yeterli. İstersen LinkedIn profilini ve kısa bir ön yazı da ekleyebilirsin." },
   { q: "Hangi iş koluna başvuracağımı nasıl seçeceğim?", a: "Seçmene gerek yok. Tek bir genel başvuru yapıyorsun; işe alım ekibimiz CV'ni ve deneyimini inceleyip seni en uygun iş koluna ve pozisyona yönlendiriyor." },
   { q: "Başvurumun sonucunu ne zaman öğrenirim?", a: "Ön değerlendirme genellikle 7 iş günü içinde tamamlanır. Sana e-posta ve telefonla ulaşırız." },
   { q: "Kurye veya sürücü partner olmak için de bu formu mu kullanmalıyım?", a: "Evet. Partner fırsatları için de aynı genel başvuru formunu kullanabilirsin; ön yazında belirtmen yeterli. Ekibimiz seni doğru onboarding sürecine yönlendirir." },

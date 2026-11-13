@@ -19,7 +19,10 @@ export type Application = {
   city: string;
   linkedin?: string;
   message?: string;
-  cv: { originalName: string; storedName: string; size: number; mimeType: string };
+  /** Deneyim süresi (EXPERIENCE_OPTIONS id). Eski kayıtlarda olmayabilir. */
+  experience?: string;
+  /** Deneyimi olmayan adaylar CV yüklemez. */
+  cv: { originalName: string; storedName: string; size: number; mimeType: string } | null;
   status: StatusId;
   notes: string;
   createdAt: string;

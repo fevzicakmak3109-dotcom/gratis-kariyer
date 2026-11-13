@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { BUSINESS_LINES, GENERAL_LINE, businessLineName } from "@/lib/positions";
+import { BUSINESS_LINES, GENERAL_LINE, businessLineName, experienceLabel } from "@/lib/positions";
 import type { Application } from "@/lib/types";
 import { UberWordmark } from "@/components/Logo";
 import { BUSINESS_ICONS, Download, FileIcon, Logout, Refresh, Search, Trash } from "@/components/icons";
@@ -177,6 +177,7 @@ export function AdminDashboard() {
                   <tr>
                     <th className="px-6 py-3.5 font-medium">Aday</th>
                     <th className="px-4 py-3.5 font-medium">Yönlendirilen ekip</th>
+                    <th className="px-4 py-3.5 font-medium">Deneyim</th>
                     <th className="px-4 py-3.5 font-medium">Telefon</th>
                     <th className="px-4 py-3.5 font-medium">Şehir</th>
                     <th className="px-4 py-3.5 font-medium">Tarih</th>
@@ -211,6 +212,10 @@ export function AdminDashboard() {
                             <span className="inline-flex rounded-full bg-uber-gray-100 px-2.5 py-1 text-xs font-semibold text-uber-gray-600">Yönlendirilmedi</span>
                           )}
                         </td>
+                        <td className="whitespace-nowrap px-4 py-4 text-sm">
+                          {a.experience ? experienceLabel(a.experience) : <span className="text-uber-gray-400">—</span>}
+                          {!a.cv && <span className="mt-1 block w-fit rounded-full bg-uber-gray-100 px-2 py-0.5 text-[11px] font-semibold text-uber-gray-600">CV yok</span>}
+                        </td>
                         <td className="whitespace-nowrap px-4 py-4 text-sm tabular-nums">{a.phone}</td>
                         <td className="px-4 py-4 text-sm">{a.city}</td>
                         <td className="whitespace-nowrap px-4 py-4 text-sm text-uber-gray-600">{fmtDate(a.createdAt)}</td>
@@ -239,7 +244,7 @@ export function AdminDashboard() {
                       <div className="min-w-0 flex-1">
                         <p className="truncate font-semibold">{a.firstName} {a.lastName}</p>
                         <p className="truncate text-sm">{businessLineName(a.businessLine)}</p>
-                        <p className="mt-1 text-[13px] text-uber-gray-600">{a.city} · {fmtDate(a.createdAt)}</p>
+                        <p className="mt-1 text-[13px] text-uber-gray-600">{a.experience ? `${experienceLabel(a.experience)} · ` : ""}{a.city} · {fmtDate(a.createdAt)}</p>
                       </div>
                     </button>
                     <button

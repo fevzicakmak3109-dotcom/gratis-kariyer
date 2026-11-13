@@ -1,5 +1,5 @@
 import { listApplications } from "@/lib/storage";
-import { businessLineName } from "@/lib/positions";
+import { businessLineName, experienceLabel } from "@/lib/positions";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,7 +12,7 @@ const cell = (v: unknown) => {
 
 export async function GET() {
   const items = await listApplications();
-  const header = ["Tarih", "Ad", "Soyad", "E-posta", "Telefon", "Yönlendirilen Ekip", "Başvuru", "Şehir", "LinkedIn", "Not"];
+  const header = ["Tarih", "Ad", "Soyad", "E-posta", "Telefon", "Yönlendirilen Ekip", "Başvuru", "Deneyim", "CV", "Şehir", "LinkedIn", "Not"];
   const rows = items.map((a) =>
     [
       new Date(a.createdAt).toLocaleString("tr-TR"),
@@ -22,6 +22,8 @@ export async function GET() {
       a.phone,
       businessLineName(a.businessLine),
       a.role,
+      experienceLabel(a.experience),
+      a.cv ? "Var" : "Yok",
       a.city,
       a.linkedin ?? "",
       a.notes,

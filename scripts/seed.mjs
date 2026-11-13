@@ -48,6 +48,7 @@ const items = people.map(([fn, ln, line, role, city, status, msg], i) => {
     businessLine: line, role, city,
     ...(i % 2 ? {} : { linkedin: `https://linkedin.com/in/demo-${i}` }),
     ...(msg ? { message: msg } : {}),
+    experience: ["3-5", "1-3", "5-10", "lt1", "10+", "1-3", "3-5", "1-3"][i % 8],
     cv: { originalName: `${fn}_${ln}_CV.pdf`, storedName: `${id}.pdf`, size: 0, mimeType: "application/pdf" },
     status, notes: status === "interview" ? "Teknik mülakat 18 Kasım 14:00." : "",
     createdAt: created, updatedAt: created,

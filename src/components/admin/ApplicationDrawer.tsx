@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import { BUSINESS_LINES, GENERAL_LINE, businessLineName } from "@/lib/positions";
+import { BUSINESS_LINES, GENERAL_LINE, businessLineName, experienceLabel } from "@/lib/positions";
 import type { Application } from "@/lib/types";
-import { Close, Download, Eye, FileIcon, Linkedin, Mail, Phone, Pin } from "@/components/icons";
+import { Briefcase, Close, Download, Eye, FileIcon, Linkedin, Mail, Phone, Pin } from "@/components/icons";
 
 type Props = {
   app: Application;
@@ -45,7 +45,7 @@ export function ApplicationDrawer({ app, onClose, onUpdated }: Props) {
     }
   }
 
-  const isPdf = app.cv.mimeType === "application/pdf";
+  const isPdf = app.cv?.mimeType === "application/pdf";
   const cvUrl = `/api/admin/applications/${app.id}/cv`;
   const waPhone = app.phone.replace(/\D/g, "");
 
@@ -99,6 +99,7 @@ export function ApplicationDrawer({ app, onClose, onUpdated }: Props) {
                 { icon: Mail, k: "E-posta", v: app.email },
                 { icon: Phone, k: "Telefon", v: app.phone },
                 { icon: Pin, k: "Şehir", v: app.city },
+                { icon: Briefcase, k: "Deneyim", v: experienceLabel(app.experience) },
               ].map(({ icon: I, k, v }) => (
                 <div key={k} className="flex items-center gap-3 px-4 py-3">
                   <I className="size-4 shrink-0 text-uber-gray-600" />
@@ -122,6 +123,11 @@ export function ApplicationDrawer({ app, onClose, onUpdated }: Props) {
           {/* CV */}
           <section className="mt-7">
             <h3 className="text-sm font-semibold">CV</h3>
+            {!app.cv ? (
+              <p className="mt-3 rounded-xl bg-uber-gray-50 px-4 py-3 text-[14px] text-uber-gray-600">
+                Aday deneyimi olmadığını belirttiği için CV yüklemedi.
+              </p>
+            ) : (<>
             <div className="mt-3 flex items-center gap-3 rounded-xl border border-uber-gray-100 p-3">
               <span className="grid size-11 shrink-0 place-items-center rounded-lg bg-black text-white"><FileIcon className="size-5" /></span>
               <div className="min-w-0 flex-1">
@@ -134,6 +140,7 @@ export function ApplicationDrawer({ app, onClose, onUpdated }: Props) {
               <a href={`${cvUrl}?download`} className="grid size-10 place-items-center rounded-lg bg-black text-white hover:bg-uber-gray-800" aria-label="CV indir"><Download className="size-5" /></a>
             </div>
             {preview && isPdf && <iframe src={cvUrl} title="CV önizleme" className="mt-3 h-[520px] w-full rounded-xl border border-uber-gray-100" />}
+            </>)}
           </section>
 
           {/* notlar */}

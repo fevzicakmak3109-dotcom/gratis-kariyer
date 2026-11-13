@@ -1,6 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
-import { CITIES } from "@/lib/positions";
+import { CITIES, EXPERIENCE_OPTIONS, NO_EXPERIENCE } from "@/lib/positions";
 import { ArrowRight, Check, Close, FileIcon, Lock, Upload } from "./icons";
 
 type Errors = Partial<Record<string, string>>;
@@ -17,7 +17,7 @@ function formatPhone(raw: string) {
   return parts.join(" ");
 }
 
-function validate(f: FormData, cv: File | null): Errors {
+function validate(f: FormData, cv: File | null, needsCv: boolean): Errors {
   const e: Errors = {};
   const s = (k: string) => String(f.get(k) ?? "").trim();
   if (s("firstName").length < 2) e.firstName = "Adını gir.";
@@ -27,7 +27,8 @@ function validate(f: FormData, cv: File | null): Errors {
   if (!s("city")) e.city = "Bir şehir seç.";
   const li = s("linkedin");
   if (li && !/^https?:\/\/(www\.)?linkedin\.com\//i.test(li)) e.linkedin = "Bağlantı linkedin.com ile başlamalı.";
-  if (!cv) e.cv = "CV dosyanı yükle.";
+  if (!s("experience")) e.experience = "Deneyim süreni seç.";
+  if (needsCv && !cv) e.cv = "CV dosyanı yükle.";
   if (!f.get("consent")) e.consent = "Devam etmek için KVKK metnini onaylamalısın.";
   return e;
 }
@@ -42,6 +43,8 @@ export function ApplicationForm() {
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [serverError, setServerError] = useState("");
   const [name, setName] = useState("");
+  const [experience, setExperience] = useState("");
+  const needsCv = experience !== NO_EXPERIENCE;
 
   function pickFile(f: File | undefined) {
     if (!f) return;
@@ -56,14 +59,15 @@ export function ApplicationForm() {
     ev.preventDefault();
     setServerError("");
     const fd = new FormData(ev.currentTarget);
-    const errs = validate(fd, cv);
+    const errs = validate(fd, cv, needsCv);
     setErrors(errs);
     if (Object.keys(errs).length) {
       const first = Object.keys(errs)[0];
       formRef.current?.querySelector<HTMLElement>(`[name="${first}"], #field-${first}`)?.focus();
       return;
     }
-    fd.set("cv", cv!);
+    if (needsCv && cv) fd.set("cv", cv);
+    else fd.delete("cv");
     setStatus("sending");
     try {
       const res = await fetch("/api/applications", { method: "POST", body: fd });
@@ -86,6 +90,7 @@ export function ApplicationForm() {
     formRef.current?.reset();
     setCv(null);
     setPhone("");
+    setExperience("");
     setErrors({});
     setStatus("idle");
   }
@@ -108,10 +113,10 @@ export function ApplicationForm() {
             <p className="text-sm font-semibold uppercase tracking-[0.14em] text-uber-gray-400">Genel başvuru</p>
             <h2 className="mt-3 text-4xl font-bold tracking-[-0.03em] sm:text-[44px] sm:leading-[1.05]">Yolculuğun burada başlıyor.</h2>
             <p className="mt-4 text-[15px] leading-relaxed text-uber-gray-400">
-              Formu doldur, CV&apos;ni yükle. İşe alım ekibimiz başvurunu inceleyip seni en uygun ekibe yönlendirecek ve en kısa sürede seninle iletişime geçecek.
+              Formu doldur, deneyimin varsa CV&apos;ni de ekle. İşe alım ekibimiz başvurunu inceleyip seni en uygun ekibe yönlendirecek ve en kısa sürede seninle iletişime geçecek.
             </p>
             <ul className="mt-8 space-y-4 text-[15px]">
-              {["Ad, soyad ve iletişim bilgileri", "Cep telefonu numarası", "CV (PDF / DOC / DOCX, maks. 5 MB)", "Yaşadığın şehir"].map((t) => (
+              {["Ad, soyad ve iletişim bilgileri", "Cep telefonu numarası", "Deneyim süren ve CV (varsa)", "Yaşadığın şehir"].map((t) => (
                 <li key={t} className="flex items-center gap-3">
                   <span className="grid size-6 shrink-0 place-items-center rounded-full bg-uber-gray-800"><Check className="size-3.5" /></span>
                   {t}
@@ -184,7 +189,50 @@ export function ApplicationForm() {
                   {err("linkedin")}
                 </div>
 
-                {/* CV yükleme */}
+                {/* Deneyim */}
+                <fieldset className="sm:col-span-2" id="field-experience">
+                  <legend className="label">Alanında kaç yıl deneyimin var? *</legend>
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                    {EXPERIENCE_OPTIONS.map((o) => {
+                      const active = experience === o.id;
+                      return (
+                        <label
+                          key={o.id}
+                          className={`flex cursor-pointer items-center justify-center rounded-xl border-2 px-3 py-3 text-center text-[14px] font-medium transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-uber-blue ${
+                            active
+                              ? "border-black bg-black text-white"
+                              : errors.experience
+                                ? "border-uber-red bg-white hover:bg-uber-gray-50"
+                                : "border-uber-gray-200 bg-white hover:border-uber-gray-400"
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="experience"
+                            value={o.id}
+                            checked={active}
+                            onChange={() => {
+                              setExperience(o.id);
+                              if (o.id === NO_EXPERIENCE) setErrors((x) => ({ ...x, cv: undefined }));
+                            }}
+                            className="sr-only"
+                            {...aria("experience")}
+                          />
+                          {o.label}
+                        </label>
+                      );
+                    })}
+                  </div>
+                  {err("experience")}
+                  {experience === NO_EXPERIENCE && (
+                    <p className="mt-3 rounded-xl bg-uber-gray-50 px-4 py-3 text-[14px] leading-relaxed text-uber-gray-600">
+                      Sorun değil, herkes bir yerden başlar. Deneyimin olmadığı için CV yüklemene gerek yok; aşağıda kendinden kısaca bahsetmen yeterli.
+                    </p>
+                  )}
+                </fieldset>
+
+                {/* CV yükleme: deneyimi olmayan adaylara gösterilmez */}
+                {needsCv && (
                 <div className="sm:col-span-2">
                   <span className="label">CV *</span>
                   {cv ? (
@@ -218,6 +266,7 @@ export function ApplicationForm() {
                   )}
                   {err("cv")}
                 </div>
+                )}
 
                 <div className="sm:col-span-2">
                   <label htmlFor="message" className="label">Kısaca kendinden bahset <span className="font-normal text-uber-gray-600">(isteğe bağlı)</span></label>

@@ -29,7 +29,7 @@ export const storageDriver = () => (supabase() ? "supabase" : "file");
 type Driver = {
   list(): Promise<Application[]>;
   get(id: string): Promise<Application | null>;
-  create(app: Application, cv: Buffer): Promise<Application>;
+  create(app: Application, cv: Buffer | null): Promise<Application>;
   update(id: string, patch: Partial<Pick<Application, "status" | "notes" | "businessLine">>): Promise<Application | null>;
   remove(id: string): Promise<boolean>;
   readCv(app: Application): Promise<Buffer>;
@@ -48,11 +48,13 @@ const supabaseDriver = (sb: SupabaseClient): Driver => ({
     return (data?.data as Application) ?? null;
   },
   async create(app, cv) {
-    const up = await sb.storage.from(BUCKET).upload(app.cv.storedName, cv, { contentType: app.cv.mimeType, upsert: false });
-    if (up.error) throw up.error;
+    if (app.cv && cv) {
+      const up = await sb.storage.from(BUCKET).upload(app.cv.storedName, cv, { contentType: app.cv.mimeType, upsert: false });
+      if (up.error) throw up.error;
+    }
     const { error } = await sb.from("fs_docs").insert({ collection: COLLECTION, id: app.id, data: app });
     if (error) {
-      await sb.storage.from(BUCKET).remove([app.cv.storedName]);
+      if (app.cv) await sb.storage.from(BUCKET).remove([app.cv.storedName]);
       throw error;
     }
     return app;
@@ -70,10 +72,11 @@ const supabaseDriver = (sb: SupabaseClient): Driver => ({
     if (!current) return false;
     const { error } = await sb.from("fs_docs").delete().eq("collection", COLLECTION).eq("id", id);
     if (error) throw error;
-    await sb.storage.from(BUCKET).remove([current.cv.storedName]);
+    if (current.cv) await sb.storage.from(BUCKET).remove([current.cv.storedName]);
     return true;
   },
   async readCv(app) {
+    if (!app.cv) throw new Error("CV yok");
     const { data, error } = await sb.storage.from(BUCKET).download(app.cv.storedName);
     if (error) throw error;
     return Buffer.from(await data.arrayBuffer());
@@ -111,7 +114,7 @@ const fileDriver: Driver = {
   create: (app, cv) =>
     serialize(async () => {
       await fs.mkdir(CV_DIR, { recursive: true });
-      await fs.writeFile(path.join(CV_DIR, app.cv.storedName), cv);
+      if (app.cv && cv) await fs.writeFile(path.join(CV_DIR, app.cv.storedName), cv);
       await writeAll([...(await readAll()), app]);
       return app;
     }),
@@ -130,10 +133,13 @@ const fileDriver: Driver = {
       const app = items.find((a) => a.id === id);
       if (!app) return false;
       await writeAll(items.filter((a) => a.id !== id));
-      await fs.rm(path.join(CV_DIR, app.cv.storedName), { force: true });
+      if (app.cv) await fs.rm(path.join(CV_DIR, app.cv.storedName), { force: true });
       return true;
     }),
-  readCv: (app) => fs.readFile(path.join(CV_DIR, path.basename(app.cv.storedName))),
+  readCv: async (app) => {
+    if (!app.cv) throw new Error("CV yok");
+    return fs.readFile(path.join(CV_DIR, path.basename(app.cv.storedName)));
+  },
 };
 
 const driver = (): Driver => {
@@ -146,7 +152,7 @@ export async function listApplications() {
   return (await driver().list()).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 export const getApplication = (id: string) => driver().get(id);
-export const createApplication = (app: Application, cv: Buffer) => driver().create(app, cv);
+export const createApplication = (app: Application, cv: Buffer | null) => driver().create(app, cv);
 export const updateApplication = (id: string, patch: Partial<Pick<Application, "status" | "notes" | "businessLine">>) => driver().update(id, patch);
 export const deleteApplication = (id: string) => driver().remove(id);
 export const readCv = (app: Application) => driver().readCv(app);
