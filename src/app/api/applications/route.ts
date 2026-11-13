@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { createApplication } from "@/lib/storage";
-import { CITIES, EXPERIENCE_OPTIONS, GENERAL_LINE, NO_EXPERIENCE } from "@/lib/positions";
+import { CITIES, CV_UPLOAD_ENABLED, EXPERIENCE_OPTIONS, GENERAL_LINE, NO_EXPERIENCE } from "@/lib/positions";
 import type { Application } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -63,13 +63,13 @@ export async function POST(req: Request) {
   if (linkedin && !/^https?:\/\/(www\.)?linkedin\.com\//i.test(linkedin))
     errors.linkedin = "LinkedIn profil bağlantısı linkedin.com ile başlamalı.";
   if (!EXPERIENCE_OPTIONS.some((e) => e.id === experience)) errors.experience = "Deneyim süreni seç.";
-  const needsCv = experience !== NO_EXPERIENCE;
+  const needsCv = CV_UPLOAD_ENABLED && experience !== NO_EXPERIENCE;
   if (!consent) errors.consent = "Devam etmek için KVKK metnini onaylamalısın.";
 
   let cvBuf: Buffer | null = null;
   let ext = "";
   if (!needsCv) {
-    // Deneyimi olmayan adaylardan CV istemiyoruz; gönderilse bile yok sayılır.
+    // CV istenmiyorsa (yükleme kapalı ya da aday deneyimsiz) gönderilse bile yok sayılır.
   } else if (!(cv instanceof File) || cv.size === 0) {
     errors.cv = "CV dosyanı yükle.";
   } else {

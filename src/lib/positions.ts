@@ -97,3 +97,7 @@ export const EXPERIENCE_OPTIONS = [
 export function experienceLabel(id?: string) {
   return EXPERIENCE_OPTIONS.find((e) => e.id === id)?.label ?? "Belirtilmedi";
 }
+
+/** CV yükleme alanı. Şimdilik kapalı; tekrar açmak için true yapman yeterli
+ *  (form, sunucu doğrulaması, metinler ve admin paneli buna göre değişir). */
+export const CV_UPLOAD_ENABLED = false;

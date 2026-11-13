@@ -1,5 +1,7 @@
+import { CV_UPLOAD_ENABLED } from "@/lib/positions";
+
 const STEPS = [
-  { n: "01", title: "Başvur", text: "Formu doldur, deneyimin varsa CV'ni ekle. 3 dakikadan kısa sürer." },
+  { n: "01", title: "Başvur", text: CV_UPLOAD_ENABLED ? "Formu doldur, deneyimin varsa CV'ni ekle. 3 dakikadan kısa sürer." : "Formu doldur, 3 dakikadan kısa sürer." },
   { n: "02", title: "Ön değerlendirme", text: "Ekibimiz başvurunu inceler, seni en uygun iş koluna yönlendirir ve 7 iş günü içinde dönüş yapar." },
   { n: "03", title: "Mülakatlar", text: "İK görüşmesi ve ekiple tanışma. Teknik rollerde vaka çalışması." },
   { n: "04", title: "Hoş geldin", text: "Teklif ve onboarding. Uber yolculuğun başlıyor." },

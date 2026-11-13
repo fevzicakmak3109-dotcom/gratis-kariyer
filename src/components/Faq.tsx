@@ -1,6 +1,10 @@
+import { CV_UPLOAD_ENABLED } from "@/lib/positions";
+
 const QA = [
-  { q: "Hangi belgeleri hazırlamalıyım?", a: "Deneyimin varsa güncel bir CV (PDF, DOC veya DOCX, en fazla 5 MB) yeterli. Hiç deneyimin yoksa CV istemiyoruz; kendinden kısaca bahsetmen yeterli. İstersen LinkedIn profilini ve kısa bir ön yazı da ekleyebilirsin." },
-  { q: "Hangi iş koluna başvuracağımı nasıl seçeceğim?", a: "Seçmene gerek yok. Tek bir genel başvuru yapıyorsun; işe alım ekibimiz CV'ni ve deneyimini inceleyip seni en uygun iş koluna ve pozisyona yönlendiriyor." },
+  { q: "Hangi belgeleri hazırlamalıyım?", a: CV_UPLOAD_ENABLED
+    ? "Deneyimin varsa güncel bir CV (PDF, DOC veya DOCX, en fazla 5 MB) yeterli. Hiç deneyimin yoksa CV istemiyoruz; kendinden kısaca bahsetmen yeterli. İstersen LinkedIn profilini ve kısa bir ön yazı da ekleyebilirsin."
+    : "Herhangi bir belge hazırlamana gerek yok. Formu doldurman yeterli; istersen LinkedIn profilini ve kısa bir ön yazı da ekleyebilirsin." },
+  { q: "Hangi iş koluna başvuracağımı nasıl seçeceğim?", a: "Seçmene gerek yok. Tek bir genel başvuru yapıyorsun; işe alım ekibimiz deneyimini ve başvurunu inceleyip seni en uygun iş koluna ve pozisyona yönlendiriyor." },
   { q: "Başvurumun sonucunu ne zaman öğrenirim?", a: "Ön değerlendirme genellikle 7 iş günü içinde tamamlanır. Sana e-posta ve telefonla ulaşırız." },
   { q: "Kurye veya sürücü partner olmak için de bu formu mu kullanmalıyım?", a: "Evet. Partner fırsatları için de aynı genel başvuru formunu kullanabilirsin; ön yazında belirtmen yeterli. Ekibimiz seni doğru onboarding sürecine yönlendirir." },
   { q: "Kişisel verilerim nasıl korunuyor?", a: "Verilerin 6698 sayılı KVKK kapsamında yalnızca işe alım süreci için işlenir ve yetkisiz kişilerle paylaşılmaz." },

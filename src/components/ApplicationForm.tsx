@@ -1,6 +1,6 @@
 "use client";
 import { useRef, useState } from "react";
-import { CITIES, EXPERIENCE_OPTIONS, NO_EXPERIENCE } from "@/lib/positions";
+import { CITIES, CV_UPLOAD_ENABLED, EXPERIENCE_OPTIONS, NO_EXPERIENCE } from "@/lib/positions";
 import { ArrowRight, Check, Close, FileIcon, Lock, Upload } from "./icons";
 
 type Errors = Partial<Record<string, string>>;
@@ -44,7 +44,7 @@ export function ApplicationForm() {
   const [serverError, setServerError] = useState("");
   const [name, setName] = useState("");
   const [experience, setExperience] = useState("");
-  const needsCv = experience !== NO_EXPERIENCE;
+  const needsCv = CV_UPLOAD_ENABLED && experience !== NO_EXPERIENCE;
 
   function pickFile(f: File | undefined) {
     if (!f) return;
@@ -113,10 +113,10 @@ export function ApplicationForm() {
             <p className="text-sm font-semibold uppercase tracking-[0.14em] text-uber-gray-400">Genel başvuru</p>
             <h2 className="mt-3 text-4xl font-bold tracking-[-0.03em] sm:text-[44px] sm:leading-[1.05]">Yolculuğun burada başlıyor.</h2>
             <p className="mt-4 text-[15px] leading-relaxed text-uber-gray-400">
-              Formu doldur, deneyimin varsa CV&apos;ni de ekle. İşe alım ekibimiz başvurunu inceleyip seni en uygun ekibe yönlendirecek ve en kısa sürede seninle iletişime geçecek.
+              {CV_UPLOAD_ENABLED ? <>Formu doldur, deneyimin varsa CV&apos;ni de ekle. </> : "Formu doldur, gerisini bize bırak. "}İşe alım ekibimiz başvurunu inceleyip seni en uygun ekibe yönlendirecek ve en kısa sürede seninle iletişime geçecek.
             </p>
             <ul className="mt-8 space-y-4 text-[15px]">
-              {["Ad, soyad ve iletişim bilgileri", "Cep telefonu numarası", "Deneyim süren ve CV (varsa)", "Yaşadığın şehir"].map((t) => (
+              {["Ad, soyad ve iletişim bilgileri", "Cep telefonu numarası", CV_UPLOAD_ENABLED ? "Deneyim süren ve CV (varsa)" : "Alanındaki deneyim süren", "Yaşadığın şehir"].map((t) => (
                 <li key={t} className="flex items-center gap-3">
                   <span className="grid size-6 shrink-0 place-items-center rounded-full bg-uber-gray-800"><Check className="size-3.5" /></span>
                   {t}
@@ -224,14 +224,14 @@ export function ApplicationForm() {
                     })}
                   </div>
                   {err("experience")}
-                  {experience === NO_EXPERIENCE && (
+                  {CV_UPLOAD_ENABLED && experience === NO_EXPERIENCE && (
                     <p className="mt-3 rounded-xl bg-uber-gray-50 px-4 py-3 text-[14px] leading-relaxed text-uber-gray-600">
                       Sorun değil, herkes bir yerden başlar. Deneyimin olmadığı için CV yüklemene gerek yok; aşağıda kendinden kısaca bahsetmen yeterli.
                     </p>
                   )}
                 </fieldset>
 
-                {/* CV yükleme: deneyimi olmayan adaylara gösterilmez */}
+                {/* CV yükleme: şimdilik kapalı (CV_UPLOAD_ENABLED); açıkken deneyimi olmayan adaylara gösterilmez */}
                 {needsCv && (
                 <div className="sm:col-span-2">
                   <span className="label">CV *</span>

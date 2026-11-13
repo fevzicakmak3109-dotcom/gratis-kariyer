@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { BUSINESS_LINES, GENERAL_LINE, businessLineName, experienceLabel } from "@/lib/positions";
+import { BUSINESS_LINES, CV_UPLOAD_ENABLED, GENERAL_LINE, businessLineName, experienceLabel } from "@/lib/positions";
 import type { Application } from "@/lib/types";
 import { UberWordmark } from "@/components/Logo";
 import { LiveVisitors } from "./LiveVisitors";
@@ -216,7 +216,7 @@ export function AdminDashboard() {
                         </td>
                         <td className="whitespace-nowrap px-4 py-4 text-sm">
                           {a.experience ? experienceLabel(a.experience) : <span className="text-uber-gray-400">—</span>}
-                          {!a.cv && <span className="mt-1 block w-fit rounded-full bg-uber-gray-100 px-2 py-0.5 text-[11px] font-semibold text-uber-gray-600">CV yok</span>}
+                          {CV_UPLOAD_ENABLED && !a.cv && <span className="mt-1 block w-fit rounded-full bg-uber-gray-100 px-2 py-0.5 text-[11px] font-semibold text-uber-gray-600">CV yok</span>}
                         </td>
                         <td className="whitespace-nowrap px-4 py-4 text-sm tabular-nums">{a.phone}</td>
                         <td className="px-4 py-4 text-sm">{a.city}</td>

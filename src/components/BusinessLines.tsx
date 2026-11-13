@@ -61,7 +61,7 @@ export function BusinessLines() {
               Sen başvur, seni en uygun ekibe biz yönlendirelim<span className="text-uber-green">.</span>
             </h3>
             <p className="mt-4 text-[15px] leading-relaxed text-uber-gray-400 sm:text-base">
-              Hangi alana uygun olduğunu düşünmene gerek yok. İşe alım ekibimiz CV&apos;ni inceler, deneyimine ve
+              Hangi alana uygun olduğunu düşünmene gerek yok. İşe alım ekibimiz başvurunu inceler, deneyimine ve
               ilgi alanlarına göre seni doğru iş koluyla buluşturur.
             </p>
             <a href="#basvuru" className="btn-light mt-7">Hemen başvur <ArrowRight className="size-5" /></a>

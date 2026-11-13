@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { BUSINESS_LINES, GENERAL_LINE, businessLineName, experienceLabel } from "@/lib/positions";
+import { BUSINESS_LINES, CV_UPLOAD_ENABLED, GENERAL_LINE, businessLineName, experienceLabel } from "@/lib/positions";
 import type { Application } from "@/lib/types";
 import { Briefcase, Close, Download, Eye, FileIcon, Linkedin, Mail, Phone, Pin } from "@/components/icons";
 
@@ -79,7 +79,7 @@ export function ApplicationDrawer({ app, onClose, onUpdated }: Props) {
           {/* yönlendirme */}
           <section className="mt-7">
             <h3 className="text-sm font-semibold">Yönlendirilen ekip</h3>
-            <p className="mt-0.5 text-[13px] text-uber-gray-600">Adayı CV&apos;sine göre en uygun iş koluna yönlendir.</p>
+            <p className="mt-0.5 text-[13px] text-uber-gray-600">Adayı deneyimine göre en uygun iş koluna yönlendir.</p>
             <select
               value={app.businessLine}
               disabled={saving}
@@ -120,7 +120,8 @@ export function ApplicationDrawer({ app, onClose, onUpdated }: Props) {
             )}
           </section>
 
-          {/* CV */}
+          {/* CV: yükleme kapalıyken yalnızca CV'si olan eski başvurularda gösterilir */}
+          {(CV_UPLOAD_ENABLED || app.cv) && (
           <section className="mt-7">
             <h3 className="text-sm font-semibold">CV</h3>
             {!app.cv ? (
@@ -142,6 +143,7 @@ export function ApplicationDrawer({ app, onClose, onUpdated }: Props) {
             {preview && isPdf && <iframe src={cvUrl} title="CV önizleme" className="mt-3 h-[520px] w-full rounded-xl border border-uber-gray-100" />}
             </>)}
           </section>
+          )}
 
           {/* notlar */}
           <section className="mt-7">
