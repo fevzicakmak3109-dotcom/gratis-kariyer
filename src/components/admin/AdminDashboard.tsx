@@ -33,6 +33,13 @@ export function AdminDashboard() {
 
   useEffect(() => { load(); }, [load]);
 
+  // Sıra numarası: ilk başvuran 1, en son başvuran en büyük numara. Arama/filtre numarayı değiştirmez.
+  const numbers = useMemo(() => {
+    const m = new Map<string, number>();
+    [...items].sort((a, b) => a.createdAt.localeCompare(b.createdAt)).forEach((a, i) => m.set(a.id, i + 1));
+    return m;
+  }, [items]);
+
   const filtered = useMemo(() => {
     const term = q.trim().toLocaleLowerCase("tr-TR");
     return items.filter((a) => {
@@ -204,12 +211,12 @@ export function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-uber-gray-100">
-                  {filtered.map((a, i) => {
+                  {filtered.map((a) => {
                     const b = BUSINESS_LINES.find((x) => x.id === a.businessLine);
                     const Icon = BUSINESS_ICONS[a.businessLine];
                     return (
                       <tr key={a.id} onClick={() => setSelected(a)} className="cursor-pointer transition hover:bg-uber-gray-50">
-                        <td className="py-4 pl-6 pr-0 text-sm font-medium tabular-nums text-uber-gray-600">{i + 1}</td>
+                        <td className="py-4 pl-6 pr-0 text-sm font-medium tabular-nums text-uber-gray-600">{numbers.get(a.id)}</td>
                         <td className="px-4 py-4">
                           <div className="flex items-center gap-3">
                             <span className="grid size-10 shrink-0 place-items-center rounded-full bg-black text-sm font-semibold text-white">{initials(a)}</span>
@@ -260,9 +267,9 @@ export function AdminDashboard() {
 
               {/* Mobil kartlar */}
               <ul className="divide-y divide-uber-gray-100 md:hidden">
-                {filtered.map((a, i) => (
+                {filtered.map((a) => (
                   <li key={a.id} className="flex items-center">
-                    <span className="w-8 shrink-0 pl-4 text-[13px] font-medium tabular-nums text-uber-gray-600">{i + 1}</span>
+                    <span className="w-8 shrink-0 pl-4 text-[13px] font-medium tabular-nums text-uber-gray-600">{numbers.get(a.id)}</span>
                     <button onClick={() => setSelected(a)} className="flex min-w-0 flex-1 items-start gap-3 py-4 pl-3 pr-2 text-left active:bg-uber-gray-50">
                       <span className="grid size-11 shrink-0 place-items-center rounded-full bg-black text-sm font-semibold text-white">{initials(a)}</span>
                       <div className="min-w-0 flex-1">
