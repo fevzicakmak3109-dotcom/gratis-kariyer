@@ -9,8 +9,8 @@ type Ctx = { params: Promise<{ id: string }> };
 
 export async function PATCH(req: Request, { params }: Ctx) {
   const { id } = await params;
-  const body = (await req.json().catch(() => ({}))) as { status?: string; notes?: string; businessLine?: string };
-  const patch: { status?: StatusId; notes?: string; businessLine?: string } = {};
+  const body = (await req.json().catch(() => ({}))) as { status?: string; notes?: string; businessLine?: string; called?: unknown };
+  const patch: { status?: StatusId; notes?: string; businessLine?: string; called?: boolean } = {};
   if (body.status !== undefined) {
     if (!STATUSES.some((s) => s.id === body.status))
       return NextResponse.json({ error: "Geçersiz durum" }, { status: 400 });
@@ -20,6 +20,10 @@ export async function PATCH(req: Request, { params }: Ctx) {
     if (body.businessLine !== GENERAL_LINE && !BUSINESS_LINES.some((b) => b.id === body.businessLine))
       return NextResponse.json({ error: "Geçersiz iş kolu" }, { status: 400 });
     patch.businessLine = body.businessLine;
+  }
+  if (body.called !== undefined) {
+    if (typeof body.called !== "boolean") return NextResponse.json({ error: "Geçersiz değer" }, { status: 400 });
+    patch.called = body.called;
   }
   if (body.notes !== undefined) patch.notes = String(body.notes).slice(0, 2000);
   const updated = await updateApplication(id, patch);

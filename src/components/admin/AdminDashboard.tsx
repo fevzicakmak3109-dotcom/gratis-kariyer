@@ -5,7 +5,7 @@ import { BUSINESS_LINES, CV_UPLOAD_ENABLED, GENERAL_LINE, businessLineName, expe
 import type { Application } from "@/lib/types";
 import { UberWordmark } from "@/components/Logo";
 import { LiveVisitors } from "./LiveVisitors";
-import { BUSINESS_ICONS, Download, FileIcon, Logout, Refresh, Search, Trash } from "@/components/icons";
+import { BUSINESS_ICONS, Download, FileIcon, Logout, Phone, Refresh, Search, Trash } from "@/components/icons";
 import { ApplicationDrawer } from "./ApplicationDrawer";
 
 const fmtDate = (iso: string) =>
@@ -70,6 +70,22 @@ export function AdminDashboard() {
   function onUpdated(a: Application) {
     setItems((xs) => xs.map((x) => (x.id === a.id ? a : x)));
     setSelected(a);
+  }
+  /** Arandı / aranmadı: anında güncellenir, sunucu hata verirse geri alınır. */
+  async function toggleCalled(a: Application) {
+    const next = !a.called;
+    const set = (v: boolean) => setItems((xs) => xs.map((x) => (x.id === a.id ? { ...x, called: v } : x)));
+    set(next);
+    try {
+      const res = await fetch(`/api/admin/applications/${a.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ called: next }),
+      });
+      if (!res.ok) set(!next);
+    } catch {
+      set(!next);
+    }
   }
   async function confirmDelete() {
     if (!toDelete) return;
@@ -162,7 +178,7 @@ export function AdminDashboard() {
           </select>
         </div>
         {/* Liste */}
-        <div className="mt-3 overflow-hidden rounded-2xl bg-white">
+        <div className="mt-3 overflow-x-auto rounded-2xl bg-white">
           {loading && !items.length ? (
             <div className="space-y-px">{[0, 1, 2, 3].map((i) => <div key={i} className="h-[72px] animate-pulse bg-uber-gray-50" />)}</div>
           ) : !filtered.length ? (
@@ -177,27 +193,29 @@ export function AdminDashboard() {
               <table className="hidden w-full text-left md:table">
                 <thead className="border-b border-uber-gray-100 text-[13px] text-uber-gray-600">
                   <tr>
-                    <th className="px-6 py-3.5 font-medium">Aday</th>
+                    <th className="w-14 py-3.5 pl-6 pr-0 font-medium">#</th>
+                    <th className="px-4 py-3.5 font-medium">Aday</th>
                     <th className="px-4 py-3.5 font-medium">Yönlendirilen ekip</th>
-                    <th className="px-4 py-3.5 font-medium">Deneyim</th>
+                    <th className="hidden px-4 py-3.5 font-medium xl:table-cell">Deneyim</th>
                     <th className="px-4 py-3.5 font-medium">Telefon</th>
                     <th className="px-4 py-3.5 font-medium">Şehir</th>
                     <th className="px-4 py-3.5 font-medium">Tarih</th>
-                    <th className="w-16 px-6 py-3.5"><span className="sr-only">Sil</span></th>
+                    <th className="w-24 px-4 py-3.5"><span className="sr-only">İşlemler</span></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-uber-gray-100">
-                  {filtered.map((a) => {
+                  {filtered.map((a, i) => {
                     const b = BUSINESS_LINES.find((x) => x.id === a.businessLine);
                     const Icon = BUSINESS_ICONS[a.businessLine];
                     return (
                       <tr key={a.id} onClick={() => setSelected(a)} className="cursor-pointer transition hover:bg-uber-gray-50">
-                        <td className="px-6 py-4">
+                        <td className="py-4 pl-6 pr-0 text-sm font-medium tabular-nums text-uber-gray-600">{i + 1}</td>
+                        <td className="px-4 py-4">
                           <div className="flex items-center gap-3">
                             <span className="grid size-10 shrink-0 place-items-center rounded-full bg-black text-sm font-semibold text-white">{initials(a)}</span>
-                            <div className="min-w-0">
+                            <div className="min-w-0 max-w-[12.5rem] xl:max-w-[20rem]">
                               <p className="truncate font-semibold">{a.firstName} {a.lastName}</p>
-                              <p className="truncate text-[13px] text-uber-gray-600">{a.email}</p>
+                              <p className="truncate text-[13px] text-uber-gray-600">{a.email}<span className="xl:hidden">{a.experience ? ` · ${experienceLabel(a.experience)}` : ""}</span></p>
                             </div>
                           </div>
                         </td>
@@ -214,14 +232,16 @@ export function AdminDashboard() {
                             <span className="inline-flex rounded-full bg-uber-gray-100 px-2.5 py-1 text-xs font-semibold text-uber-gray-600">Yönlendirilmedi</span>
                           )}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-4 text-sm">
+                        <td className="hidden whitespace-nowrap px-4 py-4 text-sm xl:table-cell">
                           {a.experience ? experienceLabel(a.experience) : <span className="text-uber-gray-400">—</span>}
                           {CV_UPLOAD_ENABLED && !a.cv && <span className="mt-1 block w-fit rounded-full bg-uber-gray-100 px-2 py-0.5 text-[11px] font-semibold text-uber-gray-600">CV yok</span>}
                         </td>
                         <td className="whitespace-nowrap px-4 py-4 text-sm tabular-nums">{a.phone}</td>
                         <td className="px-4 py-4 text-sm">{a.city}</td>
                         <td className="whitespace-nowrap px-4 py-4 text-sm text-uber-gray-600">{fmtDate(a.createdAt)}</td>
-                        <td className="px-6 py-4 text-right">
+                        <td className="px-4 py-4">
+                         <div className="flex items-center justify-end gap-1">
+                          <CallButton a={a} onToggle={toggleCalled} />
                           <button
                             onClick={(e) => { e.stopPropagation(); setToDelete(a); }}
                             className="grid size-9 place-items-center rounded-full text-uber-gray-600 transition hover:bg-uber-red/10 hover:text-uber-red"
@@ -230,6 +250,7 @@ export function AdminDashboard() {
                           >
                             <Trash className="size-[18px]" />
                           </button>
+                         </div>
                         </td>
                       </tr>
                     );
@@ -239,9 +260,10 @@ export function AdminDashboard() {
 
               {/* Mobil kartlar */}
               <ul className="divide-y divide-uber-gray-100 md:hidden">
-                {filtered.map((a) => (
+                {filtered.map((a, i) => (
                   <li key={a.id} className="flex items-center">
-                    <button onClick={() => setSelected(a)} className="flex min-w-0 flex-1 items-start gap-3 py-4 pl-4 pr-2 text-left active:bg-uber-gray-50">
+                    <span className="w-8 shrink-0 pl-4 text-[13px] font-medium tabular-nums text-uber-gray-600">{i + 1}</span>
+                    <button onClick={() => setSelected(a)} className="flex min-w-0 flex-1 items-start gap-3 py-4 pl-3 pr-2 text-left active:bg-uber-gray-50">
                       <span className="grid size-11 shrink-0 place-items-center rounded-full bg-black text-sm font-semibold text-white">{initials(a)}</span>
                       <div className="min-w-0 flex-1">
                         <p className="truncate font-semibold">{a.firstName} {a.lastName}</p>
@@ -249,6 +271,7 @@ export function AdminDashboard() {
                         <p className="mt-1 text-[13px] text-uber-gray-600">{a.experience ? `${experienceLabel(a.experience)} · ` : ""}{a.city} · {fmtDate(a.createdAt)}</p>
                       </div>
                     </button>
+                    <CallButton a={a} onToggle={toggleCalled} />
                     <button
                       onClick={() => setToDelete(a)}
                       className="mr-3 grid size-10 shrink-0 place-items-center rounded-full text-uber-gray-600 active:bg-uber-red/10 active:text-uber-red"
@@ -287,5 +310,22 @@ export function AdminDashboard() {
         </div>
       )}
     </>
+  );
+}
+
+function CallButton({ a, onToggle }: { a: Application; onToggle: (a: Application) => void }) {
+  const called = !!a.called;
+  return (
+    <button
+      onClick={(e) => { e.stopPropagation(); onToggle(a); }}
+      aria-pressed={called}
+      aria-label={`${a.firstName} ${a.lastName}: ${called ? "arandı, geri almak için tıkla" : "aranmadı, arandı olarak işaretle"}`}
+      title={called ? "Arandı (geri almak için tıkla)" : "Aranmadı (arandı olarak işaretle)"}
+      className={`grid size-9 shrink-0 place-items-center rounded-full transition active:scale-95 ${
+        called ? "bg-uber-green text-white hover:opacity-90" : "text-uber-gray-600 hover:bg-uber-gray-100 hover:text-black"
+      }`}
+    >
+      <Phone className="size-[18px]" />
+    </button>
   );
 }

@@ -21,6 +21,7 @@ Uber'in Türkiye'deki iş kolları için hazırlanmış, **Next.js 15 (App Route
 - Özet kartları (toplam, yönlendirilmemiş, bugün, son 7 gün) ve ekiplere yönlendirme grafiği
 - **Ekip yönlendirme**: genel başvuruyu CV'ye göre uygun iş koluna yönlendirme
 - Arama ve ekip filtresi
+- Her satırın solunda sıra numarası; sağında **Arandı / aranmadı** telefon düğmesi (yeşil = arandı, tek tıkla açılıp kapanır, veritabanında saklanır)
 - Masaüstünde tablo, mobilde kart görünümü
 - Başvuru detayı: tek tıkla arama / e-posta / WhatsApp, **CV önizleme ve indirme**, İK notları
 - Tablodaki her satırın sağındaki ikonla, onay alarak başvuru ve CV silme

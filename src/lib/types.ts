@@ -24,6 +24,8 @@ export type Application = {
   /** Deneyimi olmayan adaylar CV yüklemez. */
   cv: { originalName: string; storedName: string; size: number; mimeType: string } | null;
   status: StatusId;
+  /** İK adayı aradı mı? Panelde telefon ikonuyla açılıp kapanır. */
+  called?: boolean;
   notes: string;
   createdAt: string;
   updatedAt: string;
