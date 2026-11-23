@@ -1,11 +1,11 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AVAILABILITY_OPTIONS, CV_UPLOAD_ENABLED, EXPERIENCE_OPTIONS, NO_EXPERIENCE, availabilityLabel, experienceLabel } from "@/lib/positions";
+import { AVAILABILITY_OPTIONS, EXPERIENCE_OPTIONS, NO_EXPERIENCE, availabilityLabel } from "@/lib/positions";
 import type { Application } from "@/lib/types";
 import { TurkcellLogo } from "@/components/Logo";
 import { LiveVisitors } from "./LiveVisitors";
-import { Download, FileIcon, Logout, Phone, Refresh, Search, Trash } from "@/components/icons";
+import { Download, FileIcon, Home, Logout, Phone, Refresh, Search, Trash, Wallet } from "@/components/icons";
 import { ApplicationDrawer } from "./ApplicationDrawer";
 
 const fmtDate = (iso: string) =>
@@ -82,16 +82,16 @@ export function AdminDashboard() {
     setItems((xs) => xs.map((x) => (x.id === a.id ? a : x)));
     setSelected(a);
   }
-  /** Arandı / aranmadı: anında güncellenir, sunucu hata verirse geri alınır. */
-  async function toggleCalled(a: Application) {
-    const next = !a.called;
-    const set = (v: boolean) => setItems((xs) => xs.map((x) => (x.id === a.id ? { ...x, called: v } : x)));
+  /** Arandı / İkamet / Hesap işaretleri: anında güncellenir, sunucu hata verirse geri alınır. */
+  async function toggleFlag(a: Application, key: FlagKey) {
+    const next = !a[key];
+    const set = (v: boolean) => setItems((xs) => xs.map((x) => (x.id === a.id ? { ...x, [key]: v } : x)));
     set(next);
     try {
       const res = await fetch(`/api/admin/applications/${a.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ called: next }),
+        body: JSON.stringify({ [key]: next }),
       });
       if (!res.ok) set(!next);
     } catch {
@@ -201,7 +201,7 @@ export function AdminDashboard() {
           </div>
           <div className="flex gap-3">
             <select value={line} onChange={(e) => setLine(e.target.value)} className="input select bg-white lg:w-52">
-              <option value="all">Tüm vakit tercihleri</option>
+              <option value="all">Tüm vakitler</option>
               {AVAILABILITY_OPTIONS.map((o) => <option key={o.id} value={o.id}>{o.label}</option>)}
             </select>
             <select value={callF} onChange={(e) => setCallF(e.target.value as typeof callF)} className="input select bg-white lg:w-48">
@@ -230,11 +230,10 @@ export function AdminDashboard() {
                     <th className="w-14 py-3.5 pl-6 pr-0 font-medium">#</th>
                     <th className="px-4 py-3.5 font-medium">Aday</th>
                     <th className="px-4 py-3.5 font-medium">Vakit</th>
-                    <th className="hidden px-4 py-3.5 font-medium xl:table-cell">Deneyim</th>
                     <th className="px-4 py-3.5 font-medium">Telefon</th>
-                    <th className="px-4 py-3.5 font-medium">Şehir</th>
-                    <th className="px-4 py-3.5 font-medium">Tarih</th>
-                    <th className="w-24 px-4 py-3.5"><span className="sr-only">İşlemler</span></th>
+                    <th className="hidden px-4 py-3.5 font-medium xl:table-cell">Şehir</th>
+                    <th className="hidden px-4 py-3.5 font-medium xl:table-cell">Tarih</th>
+                    <th className="px-4 py-3.5 text-right font-medium">İşlemler</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-tc-gray-100">
@@ -248,7 +247,8 @@ export function AdminDashboard() {
                             <span className="grid size-10 shrink-0 place-items-center rounded-full bg-tc-yellow text-sm font-bold text-tc-navy">{initials(a)}</span>
                             <div className="min-w-0 max-w-[12.5rem] xl:max-w-[20rem]">
                               <p className="truncate font-semibold">{a.firstName} {a.lastName}</p>
-                              <p className="truncate text-[13px] text-tc-gray-600">{a.email}<span className="xl:hidden">{a.experience ? ` · ${experienceLabel(a.experience)}` : ""}</span></p>
+                              <p className="truncate text-[13px] text-tc-gray-600">{a.email}</p>
+                              <p className="truncate text-[12px] text-tc-gray-400 xl:hidden">{a.city} · {fmtDate(a.createdAt)}</p>
                             </div>
                           </div>
                         </td>
@@ -262,17 +262,12 @@ export function AdminDashboard() {
                             <span className="text-sm text-tc-gray-400">—</span>
                           )}
                         </td>
-                        <td className="hidden whitespace-nowrap px-4 py-4 text-sm xl:table-cell">
-                          {a.experience ? experienceLabel(a.experience) : <span className="text-tc-gray-400">—</span>}
-                          {a.experience === NO_EXPERIENCE && <span className="mt-1 block w-fit rounded-full bg-tc-yellow-50 px-2 py-0.5 text-[11px] font-semibold text-tc-yellow-600">Yeni başlayacak</span>}
-                          {CV_UPLOAD_ENABLED && !a.cv && <span className="mt-1 block w-fit rounded-full bg-tc-gray-100 px-2 py-0.5 text-[11px] font-semibold text-tc-gray-600">CV yok</span>}
-                        </td>
                         <td className="whitespace-nowrap px-4 py-4 text-sm tabular-nums">{a.phone}</td>
-                        <td className="px-4 py-4 text-sm">{a.city}</td>
-                        <td className="whitespace-nowrap px-4 py-4 text-sm text-tc-gray-600">{fmtDate(a.createdAt)}</td>
+                        <td className="hidden px-4 py-4 text-sm xl:table-cell">{a.city}</td>
+                        <td className="hidden whitespace-nowrap px-4 py-4 text-sm text-tc-gray-600 xl:table-cell">{fmtDate(a.createdAt)}</td>
                         <td className="px-4 py-4">
-                         <div className="flex items-center justify-end gap-1">
-                          <CallButton a={a} onToggle={toggleCalled} />
+                         <div className="flex items-center justify-end gap-1.5">
+                          <FlagChips a={a} onToggle={toggleFlag} />
                           <button
                             onClick={(e) => { e.stopPropagation(); setToDelete(a); }}
                             className="grid size-9 place-items-center rounded-full text-tc-gray-600 transition hover:bg-tc-red/10 hover:text-tc-red"
@@ -292,24 +287,28 @@ export function AdminDashboard() {
               {/* Mobil kartlar */}
               <ul className="divide-y divide-tc-gray-100 md:hidden">
                 {filtered.map((a) => (
-                  <li key={a.id} className="flex items-center">
-                    <span className="w-8 shrink-0 pl-4 text-[13px] font-medium tabular-nums text-tc-gray-600">{numbers.get(a.id)}</span>
-                    <button onClick={() => setSelected(a)} className="flex min-w-0 flex-1 items-start gap-3 py-4 pl-3 pr-2 text-left active:bg-tc-gray-50">
-                      <span className="grid size-11 shrink-0 place-items-center rounded-full bg-tc-yellow text-sm font-bold text-tc-navy">{initials(a)}</span>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate font-semibold">{a.firstName} {a.lastName}</p>
-                        <p className="truncate text-sm">{availabilityLabel(a.availability)}</p>
-                        <p className="mt-1 text-[13px] text-tc-gray-600">{a.experience ? `${experienceLabel(a.experience)} · ` : ""}{a.city} · {fmtDate(a.createdAt)}</p>
-                      </div>
-                    </button>
-                    <CallButton a={a} onToggle={toggleCalled} />
-                    <button
-                      onClick={() => setToDelete(a)}
-                      className="mr-3 grid size-10 shrink-0 place-items-center rounded-full text-tc-gray-600 active:bg-tc-red/10 active:text-tc-red"
-                      aria-label={`${a.firstName} ${a.lastName} başvurusunu sil`}
-                    >
-                      <Trash className="size-5" />
-                    </button>
+                  <li key={a.id} className="pb-4">
+                    <div className="flex items-center">
+                      <span className="w-8 shrink-0 pl-4 text-[13px] font-medium tabular-nums text-tc-gray-600">{numbers.get(a.id)}</span>
+                      <button onClick={() => setSelected(a)} className="flex min-w-0 flex-1 items-start gap-3 pb-3 pl-3 pr-2 pt-4 text-left active:bg-tc-gray-50">
+                        <span className="grid size-11 shrink-0 place-items-center rounded-full bg-tc-yellow text-sm font-bold text-tc-navy">{initials(a)}</span>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate font-semibold">{a.firstName} {a.lastName}</p>
+                          <p className="truncate text-sm">{availabilityLabel(a.availability)} · {a.phone}</p>
+                          <p className="mt-1 text-[13px] text-tc-gray-600">{a.city} · {fmtDate(a.createdAt)}</p>
+                        </div>
+                      </button>
+                      <button
+                        onClick={() => setToDelete(a)}
+                        className="mr-3 grid size-10 shrink-0 place-items-center rounded-full text-tc-gray-600 active:bg-tc-red/10 active:text-tc-red"
+                        aria-label={`${a.firstName} ${a.lastName} başvurusunu sil`}
+                      >
+                        <Trash className="size-5" />
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5 pl-[68px] pr-4">
+                      <FlagChips a={a} onToggle={toggleFlag} />
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -344,19 +343,76 @@ export function AdminDashboard() {
   );
 }
 
-function CallButton({ a, onToggle }: { a: Application; onToggle: (a: Application) => void }) {
-  const called = !!a.called;
+type FlagKey = "called" | "residence" | "account";
+const FLAGS: { key: FlagKey; label: string; icon: (p: React.SVGProps<SVGSVGElement>) => React.JSX.Element }[] = [
+  { key: "called", label: "Arandı", icon: Phone },
+  { key: "residence", label: "İkamet", icon: Home },
+  { key: "account", label: "Hesap", icon: Wallet },
+];
+
+function FlagChips({ a, onToggle }: { a: Application; onToggle: (a: Application, key: FlagKey) => void }) {
+  return (
+    <>
+      {FLAGS.map((f) => (
+        <FlagChip key={f.key} on={!!a[f.key]} label={f.label} icon={f.icon} onClick={() => onToggle(a, f.key)} who={`${a.firstName} ${a.lastName}`} />
+      ))}
+    </>
+  );
+}
+
+/** Küçük işaret kutucuğu: solda ikon, sağda yazı. Açılınca ikon dönerek tik'e dönüşür, kutu yeşile boyanır. */
+function FlagChip({
+  on,
+  label,
+  icon: Icon,
+  onClick,
+  who,
+}: {
+  on: boolean;
+  label: string;
+  icon: (p: React.SVGProps<SVGSVGElement>) => React.JSX.Element;
+  onClick: () => void;
+  who: string;
+}) {
+  const [burst, setBurst] = useState(0);
   return (
     <button
-      onClick={(e) => { e.stopPropagation(); onToggle(a); }}
-      aria-pressed={called}
-      aria-label={`${a.firstName} ${a.lastName}: ${called ? "arandı, geri almak için tıkla" : "aranmadı, arandı olarak işaretle"}`}
-      title={called ? "Arandı (geri almak için tıkla)" : "Aranmadı (arandı olarak işaretle)"}
-      className={`grid size-9 shrink-0 place-items-center rounded-full transition active:scale-95 ${
-        called ? "bg-tc-green text-white hover:opacity-90" : "text-tc-gray-600 hover:bg-tc-gray-100 hover:text-tc-navy"
-      }`}
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation();
+        if (!on) setBurst((b) => b + 1);
+        onClick();
+      }}
+      aria-pressed={on}
+      aria-label={`${who}: ${label} ${on ? "tamamlandı, geri almak için tıkla" : "işaretle"}`}
+      title={on ? `${label} ✓ (geri almak için tıkla)` : `${label} olarak işaretle`}
+      className={`relative inline-flex shrink-0 items-center gap-1.5 overflow-hidden whitespace-nowrap rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition-colors duration-300 ${
+        on
+          ? "border-tc-green bg-tc-green text-white shadow-[0_6px_14px_-6px_rgba(18,183,106,0.8)]"
+          : "border-tc-gray-200 bg-white text-tc-gray-600 hover:border-tc-blue/40 hover:text-tc-navy"
+      } ${burst && on ? "animate-[chipPop_.45s_ease-out]" : ""}`}
+      key={burst}
     >
-      <Phone className="size-[18px]" />
+      {burst > 0 && on && <span className="pointer-events-none absolute inset-0 animate-[chipFlash_.6s_ease-out_both] bg-white/40" aria-hidden />}
+      <span className="relative grid size-4 place-items-center">
+        {on ? (
+          <svg viewBox="0 0 24 24" className={`size-4 ${burst ? "animate-[spinIn_.5s_cubic-bezier(.2,.8,.2,1)_both]" : ""}`} aria-hidden>
+            <path
+              d="M5 12.5l4.5 4.5L19 7.5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeDasharray="24"
+              className={burst ? "animate-[drawCheck_.4s_.2s_ease-out_both]" : ""}
+            />
+          </svg>
+        ) : (
+          <Icon className="size-4" />
+        )}
+      </span>
+      {label}
     </button>
   );
 }

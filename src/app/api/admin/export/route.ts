@@ -12,7 +12,7 @@ const cell = (v: unknown) => {
 
 export async function GET() {
   const items = await listApplications();
-  const header = ["Tarih", "Ad", "Soyad", "E-posta", "Telefon", "Pozisyon", "Vakit", "Deneyim", "Arandı", "Şehir", "LinkedIn", "Not"];
+  const header = ["Tarih", "Ad", "Soyad", "E-posta", "Telefon", "Pozisyon", "Vakit", "Deneyim", "Arandı", "İkamet", "Hesap", "Şehir", "LinkedIn", "Not"];
   const rows = items.map((a) =>
     [
       new Date(a.createdAt).toLocaleString("tr-TR"),
@@ -24,6 +24,8 @@ export async function GET() {
       availabilityLabel(a.availability),
       experienceLabel(a.experience),
       a.called ? "Evet" : "Hayır",
+      a.residence ? "Evet" : "Hayır",
+      a.account ? "Evet" : "Hayır",
       a.city,
       a.linkedin ?? "",
       a.notes,

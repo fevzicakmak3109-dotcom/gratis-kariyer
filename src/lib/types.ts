@@ -27,6 +27,10 @@ export type Application = {
   status: StatusId;
   /** İK adayı aradı mı? Panelde telefon ikonuyla açılıp kapanır. */
   called?: boolean;
+  /** İK: ikamet bilgisi kontrol edildi mi? */
+  residence?: boolean;
+  /** İK: hesap (kullanıcı/hesap açılışı) tamamlandı mı? */
+  account?: boolean;
   notes: string;
   createdAt: string;
   updatedAt: string;

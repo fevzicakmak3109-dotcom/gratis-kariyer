@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { CV_UPLOAD_ENABLED, availabilityLabel, experienceLabel } from "@/lib/positions";
 import type { Application } from "@/lib/types";
-import { Briefcase, Clock, Close, Download, Eye, FileIcon, Linkedin, Mail, Phone, Pin } from "@/components/icons";
+import { Briefcase, Clock, Close, Home, Wallet, Download, Eye, FileIcon, Linkedin, Mail, Phone, Pin } from "@/components/icons";
 
 type Props = {
   app: Application;
@@ -87,6 +87,8 @@ export function ApplicationDrawer({ app, onClose, onUpdated }: Props) {
                 { icon: Clock, k: "Vakit", v: availabilityLabel(app.availability) },
                 { icon: Briefcase, k: "Deneyim", v: experienceLabel(app.experience) },
                 { icon: Phone, k: "Arama", v: app.called ? "Arandı ✓" : "Henüz aranmadı" },
+                { icon: Home, k: "İkamet", v: app.residence ? "Tamam ✓" : "Bekliyor" },
+                { icon: Wallet, k: "Hesap", v: app.account ? "Tamam ✓" : "Bekliyor" },
               ].map(({ icon: I, k, v }) => (
                 <div key={k} className="flex items-center gap-3 px-4 py-3">
                   <I className="size-4 shrink-0 text-tc-gray-600" />

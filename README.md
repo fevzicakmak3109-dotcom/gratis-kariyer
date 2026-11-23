@@ -27,7 +27,7 @@ Ana mesaj: **Deneyimli ya da deneyimsiz, yeter ki vakit ayırabil. Evden çalı�
 - Özet kartları: toplam, **aranmayı bekleyen**, bugün, son 7 gün
 - **Vakit ayırma tercihi** ve **deneyim** dağılımı grafikleri (tıklayınca filtreler)
 - Arama; vakit tercihi ve arandı / aranmadı filtreleri
-- Her satırın solunda sıra numarası (ilk başvuran 1); sağında **arandı / aranmadı** telefon düğmesi ve onaylı silme
+- Her satırın solunda sıra numarası (ilk başvuran 1); sağında **Arandı / İkamet / Hesap** işaret kutucukları (tıklayınca dönen tik animasyonuyla yeşile döner, tekrar tıklayınca geri alınır, veritabanında saklanır) ve onaylı silme
 - Başvuru detayı: tek tıkla arama / e-posta / WhatsApp, aday bilgileri, İK notları
 - **CSV dışa aktarma** (Excel uyumlu, Türkçe karakterli)
 - Masaüstünde tablo, mobilde kart görünümü

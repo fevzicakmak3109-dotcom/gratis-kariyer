@@ -30,7 +30,7 @@ type Driver = {
   list(): Promise<Application[]>;
   get(id: string): Promise<Application | null>;
   create(app: Application, cv: Buffer | null): Promise<Application>;
-  update(id: string, patch: Partial<Pick<Application, "status" | "notes" | "called">>): Promise<Application | null>;
+  update(id: string, patch: Partial<Pick<Application, "status" | "notes" | "called" | "residence" | "account">>): Promise<Application | null>;
   remove(id: string): Promise<boolean>;
   readCv(app: Application): Promise<Buffer>;
 };
@@ -153,6 +153,6 @@ export async function listApplications() {
 }
 export const getApplication = (id: string) => driver().get(id);
 export const createApplication = (app: Application, cv: Buffer | null) => driver().create(app, cv);
-export const updateApplication = (id: string, patch: Partial<Pick<Application, "status" | "notes" | "called">>) => driver().update(id, patch);
+export const updateApplication = (id: string, patch: Partial<Pick<Application, "status" | "notes" | "called" | "residence" | "account">>) => driver().update(id, patch);
 export const deleteApplication = (id: string) => driver().remove(id);
 export const readCv = (app: Application) => driver().readCv(app);
