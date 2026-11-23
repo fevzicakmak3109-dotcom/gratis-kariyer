@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { createApplication } from "@/lib/storage";
-import { CITIES, CV_UPLOAD_ENABLED, EXPERIENCE_OPTIONS, GENERAL_LINE, NO_EXPERIENCE } from "@/lib/positions";
+import { AVAILABILITY_OPTIONS, CITIES, CV_UPLOAD_ENABLED, EXPERIENCE_OPTIONS, NO_EXPERIENCE, ROLE } from "@/lib/positions";
 import type { Application } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -51,6 +51,7 @@ export async function POST(req: Request) {
   const linkedin = str(form.get("linkedin"), 200);
   const message = str(form.get("message"), 1000);
   const experience = str(form.get("experience"), 10);
+  const availability = str(form.get("availability"), 10);
   const consent = form.get("consent") === "on" || form.get("consent") === "true";
   const cv = form.get("cv");
 
@@ -63,6 +64,7 @@ export async function POST(req: Request) {
   if (linkedin && !/^https?:\/\/(www\.)?linkedin\.com\//i.test(linkedin))
     errors.linkedin = "LinkedIn profil bağlantısı linkedin.com ile başlamalı.";
   if (!EXPERIENCE_OPTIONS.some((e) => e.id === experience)) errors.experience = "Deneyim süreni seç.";
+  if (!AVAILABILITY_OPTIONS.some((a) => a.id === availability)) errors.availability = "Ne kadar vakit ayırabileceğini seç.";
   const needsCv = CV_UPLOAD_ENABLED && experience !== NO_EXPERIENCE;
   if (!consent) errors.consent = "Devam etmek için KVKK metnini onaylamalısın.";
 
@@ -94,8 +96,8 @@ export async function POST(req: Request) {
     lastName,
     email,
     phone,
-    businessLine: GENERAL_LINE,
-    role: "Genel Başvuru",
+    availability,
+    role: ROLE,
     city,
     linkedin: linkedin || undefined,
     message: message || undefined,

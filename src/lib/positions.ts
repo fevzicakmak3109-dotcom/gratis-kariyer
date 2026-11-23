@@ -1,68 +1,5 @@
-export type BusinessLine = {
-  id: string;
-  name: string;
-  tag: string;
-  description: string;
-  roles: string[];
-  accent: string;
-};
-
-export const BUSINESS_LINES: BusinessLine[] = [
-  {
-    id: "tech-hub",
-    name: "Uber Tech Hub İstanbul",
-    tag: "Teknoloji",
-    description:
-      "Uber'in ABD dışındaki dördüncü küresel teknoloji merkezi. Makine öğrenmesi, LLM entegrasyonu, gerçek zamanlı veri ve dağıtık sistemler üzerinde küresel ürünler geliştir.",
-    roles: ["Yazılım Mühendisi", "Veri Bilimci", "Ürün Yöneticisi", "Ürün Tasarımcısı"],
-    accent: "#276EF1",
-  },
-  {
-    id: "uber-eats",
-    name: "Trendyol Go by Uber Eats",
-    tag: "Teslimat",
-    description:
-      "Türkiye genelinde 90.000'den fazla restoran ve market ile yemek ve market teslimatını yeniden tanımlıyoruz. Operasyon, iş geliştirme ve kurye partner fırsatları seni bekliyor.",
-    roles: ["Şehir Operasyon Uzmanı", "Restoran İş Geliştirme", "Kurye Partner"],
-    accent: "#06C167",
-  },
-  {
-    id: "mobility",
-    name: "Uber Mobility",
-    tag: "Ulaşım",
-    description:
-      "Uber Taksi ile şehirde yolculuğu daha güvenli ve kolay hale getiriyoruz. Saha operasyonu, sürücü deneyimi ve partner rolleri için ekibimize katıl.",
-    roles: ["Sürücü Deneyimi Uzmanı", "Saha Operasyon", "Taksi Sürücü Partner"],
-    accent: "#FFC043",
-  },
-  {
-    id: "business",
-    name: "Uber for Business",
-    tag: "Kurumsal",
-    description:
-      "Şirketlerin çalışan ulaşımı, yemek ve teslimat ihtiyaçlarını tek platformda çözüyoruz. Kurumsal satış ve müşteri başarısı ekiplerinde yer al.",
-    roles: ["Kurumsal Satış Yöneticisi", "Müşteri Başarı Uzmanı"],
-    accent: "#7356BF",
-  },
-  {
-    id: "ops-support",
-    name: "Operasyon & Destek",
-    tag: "Operasyon",
-    description:
-      "Kullanıcılarımızın, partnerlerimizin ve işletmelerin her an yanında olan ekip. Topluluk operasyonları, güven & güvenlik ve müşteri desteği.",
-    roles: ["Topluluk Operasyonları", "Güven & Güvenlik", "Müşteri Destek Uzmanı"],
-    accent: "#FF6937",
-  },
-  {
-    id: "corporate",
-    name: "Kurumsal Fonksiyonlar",
-    tag: "Merkez",
-    description:
-      "Pazarlama, finans, hukuk, iletişim ve insan kaynakları ile Uber'in Türkiye büyümesine yön ver.",
-    roles: ["Pazarlama Uzmanı", "Finans Analisti", "İK İş Ortağı", "Hukuk Müşaviri"],
-    accent: "#E11900",
-  },
-];
+/** Bu sitede tek bir pozisyon için başvuru alınıyor. */
+export const ROLE = "Çağrı Merkezi Müşteri Temsilcisi";
 
 export const CITIES = [
   "İstanbul",
@@ -73,15 +10,26 @@ export const CITIES = [
   "Adana",
   "Konya",
   "Kocaeli",
+  "Gaziantep",
+  "Kayseri",
+  "Mersin",
+  "Samsun",
+  "Eskişehir",
+  "Diyarbakır",
+  "Trabzon",
   "Diğer",
 ] as const;
 
-/** Genel başvurular henüz bir ekibe yönlendirilmemiştir. */
-export const GENERAL_LINE = "general";
+/** "Ne kadar vakit ayırabilirsin?" sorusunun seçenekleri. */
+export const AVAILABILITY_OPTIONS = [
+  { id: "full", label: "Tam zamanlı", hint: "Haftada 45 saat", color: "#2855AC" },
+  { id: "part", label: "Yarı zamanlı", hint: "Günde 4–6 saat", color: "#FFC900" },
+  { id: "weekend", label: "Hafta sonu", hint: "Cumartesi – Pazar", color: "#12B76A" },
+  { id: "flex", label: "Esnek", hint: "Vardiyama göre", color: "#8E9FAD" },
+] as const;
 
-export function businessLineName(id: string) {
-  if (id === GENERAL_LINE) return "Yönlendirilmedi";
-  return BUSINESS_LINES.find((b) => b.id === id)?.name ?? id;
+export function availabilityLabel(id?: string) {
+  return AVAILABILITY_OPTIONS.find((a) => a.id === id)?.label ?? "Belirtilmedi";
 }
 
 export const NO_EXPERIENCE = "none";

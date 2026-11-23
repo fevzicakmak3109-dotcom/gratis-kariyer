@@ -1,14 +1,16 @@
-const ITEMS = ["Uber Tech Hub İstanbul", "Trendyol Go by Uber Eats", "Uber Taksi", "Uber for Business", "Operasyon & Destek", "Pazarlama", "Veri Bilimi", "Ürün & Tasarım"];
+import { Headset } from "./icons";
+
+const ITEMS = ["Evden çalışma", "Deneyim şartı yok", "Eğitim bizden", "Esnek vardiyalar", "Düzenli kazanç", "Sıfırdan kariyer", "Turkcell güvencesi", "#senyapdiye"];
 
 export function Marquee() {
   const row = [...ITEMS, ...ITEMS];
   return (
-    <div className="overflow-hidden border-y border-uber-gray-200 bg-uber-gray-50 py-4" aria-hidden>
-      <div className="flex w-max animate-marquee gap-10 whitespace-nowrap">
+    <div className="relative -mt-px overflow-hidden bg-tc-yellow py-4 sm:py-5" aria-hidden>
+      <div className="flex w-max animate-marquee gap-8 whitespace-nowrap">
         {row.map((t, i) => (
-          <span key={i} className="flex items-center gap-10 text-lg font-semibold tracking-tight">
+          <span key={i} className="flex items-center gap-8 text-lg font-bold tracking-tight text-tc-navy sm:text-xl">
             {t}
-            <span className="inline-block size-2 bg-black" />
+            <Headset className="size-5 text-tc-blue" />
           </span>
         ))}
       </div>

@@ -41,18 +41,18 @@ export function LiveVisitors() {
   const live = (count ?? 0) > 0;
   return (
     <div
-      className="inline-flex items-center gap-2 rounded-full bg-uber-gray-800 py-1.5 pl-3 pr-3.5 text-sm"
+      className="inline-flex items-center gap-2 rounded-full bg-white/15 py-1.5 pl-3 pr-3.5 text-sm ring-1 ring-white/20"
       title="Son 1 dakikada siteyi açık tutan ziyaretçi sayısı (15 sn'de bir güncellenir)"
       aria-live="polite"
     >
       <span className="relative flex size-2.5">
-        {live && <span className="absolute inline-flex size-full animate-ping rounded-full bg-uber-green opacity-75" />}
-        <span className={`relative inline-flex size-2.5 rounded-full ${live ? "bg-uber-green" : "bg-uber-gray-400"}`} />
+        {live && <span className="absolute inline-flex size-full animate-ping rounded-full bg-tc-green opacity-75" />}
+        <span className={`relative inline-flex size-2.5 rounded-full ${live ? "bg-tc-green" : "bg-white/50"}`} />
       </span>
       <span className={`font-semibold tabular-nums transition-transform duration-300 ${bump ? "scale-125" : ""}`}>
         {count ?? "–"}
       </span>
-      <span className="text-uber-gray-400">
+      <span className="text-white/70">
         <span className="sm:hidden">aktif</span>
         <span className="hidden sm:inline">aktif ziyaretçi</span>
       </span>

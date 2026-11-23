@@ -1,6 +1,6 @@
 # Reklam afişleri
 
-"Mezuniyet şartı yok, deneyim şartı yok — Sadece sen." kampanyası. Her format siyah ve beyaz temada üretilir; QR kod başvuru formuna (`uber-kariyer.vercel.app/#basvuru`) gider.
+"Deneyim şartı yok, ofise gitme şartı yok — Sadece sen." Turkcell Çağrı Merkezi kampanyası. Her format **mavi** (Turkcell mavisi) ve **beyaz** temada üretilir; QR kod başvuru formuna gider.
 
 | Dosya | Ölçü | Kullanım |
 | --- | --- | --- |
@@ -16,4 +16,4 @@ Yeniden üretmek için (Google Chrome gerekir):
 node reklam/olustur.mjs
 ```
 
-Sektör listesi, metinler ve formatlar `olustur.mjs` içinden değiştirilebilir.
+Metinler, avantaj listesi ve formatlar `olustur.mjs` içinden değiştirilebilir. Sitenin alan adı değişirse `qr.svg` yeni adrese göre yeniden üretilmelidir.

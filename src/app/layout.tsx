@@ -1,27 +1,26 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin", "latin-ext"], variable: "--font-inter", display: "swap" });
+const brand = Outfit({ subsets: ["latin", "latin-ext"], variable: "--font-brand", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Uber Türkiye Kariyer | Yola birlikte çıkalım",
+  title: "Turkcell Kariyer | Çağrı Merkezi Müşteri Temsilcisi",
   description:
-    "Uber Türkiye'de iş fırsatları: Uber Tech Hub İstanbul, Trendyol Go by Uber Eats, Uber Mobility, Uber for Business ve daha fazlası. Hemen başvur.",
+    "Turkcell Çağrı Merkezi müşteri temsilcisi arıyor. Deneyimli ya da deneyimsiz, yeter ki vakit ayırabil: evden çalış, düzenli kazan, Turkcell'de sıfırdan kariyerine başla.",
   openGraph: {
-    title: "Uber Türkiye Kariyer",
-    description: "Türkiye'de geleceği birlikte hareket ettirelim. Hemen başvur.",
-    images: ["/uber-kariyer-afis.svg"],
+    title: "Turkcell Çağrı Merkezi'nde kariyerin burada başlıyor",
+    description: "Deneyim şartı yok, evden çalışma fırsatı. Hemen başvur. #senyapdiye",
     locale: "tr_TR",
     type: "website",
   },
 };
 
-export const viewport: Viewport = { themeColor: "#000000", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { themeColor: "#2855AC", width: "device-width", initialScale: 1 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="tr" className={inter.variable}>
+    <html lang="tr" className={brand.variable}>
       <body className="font-sans">{children}</body>
     </html>
   );

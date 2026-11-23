@@ -1,9 +1,10 @@
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { Marquee } from "@/components/Marquee";
-import { BusinessLines } from "@/components/BusinessLines";
-import { PosterSection } from "@/components/PosterSection";
-import { Benefits } from "@/components/Benefits";
+import { Position } from "@/components/Position";
+import { WhyUs } from "@/components/WhyUs";
+import { HexSlider } from "@/components/HexSlider";
+import { CareerPath } from "@/components/CareerPath";
 import { Process } from "@/components/Process";
 import { ApplicationForm } from "@/components/ApplicationForm";
 import { Faq } from "@/components/Faq";
@@ -18,9 +19,10 @@ export default function Home() {
       <main>
         <Hero />
         <Marquee />
-        <BusinessLines />
-        <PosterSection />
-        <Benefits />
+        <Position />
+        <WhyUs />
+        <HexSlider />
+        <CareerPath />
         <Process />
         <ApplicationForm />
         <Faq />

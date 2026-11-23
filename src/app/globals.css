@@ -1,25 +1,35 @@
 @import "tailwindcss";
 
+/* Turkcell marka paleti: lacivert #253342, mavi #2855AC, sarı #FFC900 (kariyerim.turkcell.com.tr) */
 @theme {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-  --color-uber-black: #000000;
-  --color-uber-white: #ffffff;
-  --color-uber-gray-50: #f6f6f6;
-  --color-uber-gray-100: #eeeeee;
-  --color-uber-gray-200: #e2e2e2;
-  --color-uber-gray-400: #afafaf;
-  --color-uber-gray-600: #545454;
-  --color-uber-gray-800: #282828;
-  --color-uber-gray-900: #141414;
-  --color-uber-blue: #276ef1;
-  --color-uber-green: #06c167;
-  --color-uber-yellow: #ffc043;
-  --color-uber-orange: #ff6937;
-  --color-uber-purple: #7356bf;
-  --color-uber-red: #e11900;
-  --animate-marquee: marquee 40s linear infinite;
+  --font-sans: var(--font-brand), ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --color-tc-navy: #253342;
+  --color-tc-navy-900: #1a2531;
+  --color-tc-blue: #2855ac;
+  --color-tc-blue-700: #1f4391;
+  --color-tc-blue-800: #1b3778;
+  --color-tc-blue-50: #eef3fc;
+  --color-tc-yellow: #ffc900;
+  --color-tc-yellow-600: #f0b800;
+  --color-tc-yellow-50: #fff8dc;
+  --color-tc-gray-50: #f5f7f9;
+  --color-tc-gray-100: #ecf0f2;
+  --color-tc-gray-200: #dde3e8;
+  --color-tc-gray-400: #8e9fad;
+  --color-tc-gray-600: #5b6b7a;
+  --color-tc-gray-800: #34465a;
+  --color-tc-green: #12b76a;
+  --color-tc-red: #d92d20;
+
+  --animate-marquee: marquee 38s linear infinite;
   --animate-float: float 6s ease-in-out infinite;
-  --animate-dash: dash 3s linear infinite;
+  --animate-float-slow: float 9s ease-in-out infinite;
+  --animate-ring: ring 2.4s cubic-bezier(0.2, 0.7, 0.3, 1) infinite;
+  --animate-wave: wave 1.1s ease-in-out infinite;
+  --animate-shake: shake 1.6s ease-in-out infinite;
+  --animate-spin-slow: spin 28s linear infinite;
+  --animate-blink: blink 1.2s steps(2, start) infinite;
+  --animate-typing: typing 1.2s ease-in-out infinite;
 
   @keyframes marquee {
     from { transform: translateX(0); }
@@ -27,11 +37,40 @@
   }
   @keyframes float {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    50% { transform: translateY(-12px); }
   }
-  @keyframes dash {
-    to { stroke-dashoffset: -40; }
+  /* telefon çalarken genişleyen halkalar */
+  @keyframes ring {
+    0% { transform: scale(0.6); opacity: 0.7; }
+    100% { transform: scale(2.2); opacity: 0; }
   }
+  /* ses dalgası çubukları */
+  @keyframes wave {
+    0%, 100% { transform: scaleY(0.25); }
+    50% { transform: scaleY(1); }
+  }
+  /* çalan telefon titreşimi */
+  @keyframes shake {
+    0%, 40%, 100% { transform: rotate(0); }
+    5%, 15%, 25%, 35% { transform: rotate(-14deg); }
+    10%, 20%, 30% { transform: rotate(14deg); }
+  }
+  @keyframes blink {
+    to { visibility: hidden; }
+  }
+  @keyframes typing {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-4px); opacity: 1; }
+  }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes wordIn {
+  from { opacity: 0; transform: translateY(60%); filter: blur(4px); }
+  to { opacity: 1; transform: none; filter: none; }
 }
 
 html {
@@ -41,45 +80,74 @@ html {
 
 body {
   background: #ffffff;
-  color: #000000;
+  color: var(--color-tc-navy);
   -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: #000;
-  color: #fff;
+  background: var(--color-tc-yellow);
+  color: var(--color-tc-navy);
+}
+
+/* Kaydırınca beliren öğeler (Reveal bileşeni) */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--d, 0ms);
+}
+.reveal.in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Turkcell görsel dilindeki yuvarlatılmış altıgen */
+.hex {
+  clip-path: polygon(25% 3%, 75% 3%, 98% 50%, 75% 97%, 25% 97%, 2% 50%);
+}
+.hex-v {
+  clip-path: polygon(50% 0%, 96% 25%, 96% 75%, 50% 100%, 4% 75%, 4% 25%);
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation: none !important;
+    transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  .reveal { opacity: 1; transform: none; }
 }
 
 @layer components {
 .input {
-  @apply w-full rounded-lg border-2 border-transparent bg-uber-gray-100 px-4 py-3.5 text-[15px] text-black outline-none transition placeholder:text-uber-gray-600 focus:border-black focus:bg-white;
+  @apply w-full rounded-xl border-2 border-transparent bg-tc-gray-100 px-4 py-3.5 text-[15px] text-tc-navy outline-none transition placeholder:text-tc-gray-400 focus:border-tc-blue focus:bg-white;
 }
 .input[aria-invalid="true"] {
-  @apply border-uber-red bg-white;
+  @apply border-tc-red bg-white;
 }
 .label {
-  @apply mb-1.5 block text-sm font-medium text-black;
+  @apply mb-1.5 block text-sm font-semibold text-tc-navy;
 }
+/* Turkcell'in sarı hap butonu */
 .btn-primary {
-  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-black px-6 py-3.5 text-[15px] font-medium text-white transition hover:bg-uber-gray-800 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-tc-yellow px-7 py-3.5 text-[15px] font-semibold text-tc-navy shadow-[0_8px_24px_-8px_rgba(255,201,0,0.7)] transition hover:bg-tc-yellow-600 hover:shadow-[0_10px_28px_-8px_rgba(255,201,0,0.9)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
+}
+.btn-blue {
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-tc-blue px-7 py-3.5 text-[15px] font-semibold text-white transition hover:bg-tc-blue-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
 }
 .btn-secondary {
-  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-uber-gray-100 px-6 py-3.5 text-[15px] font-medium text-black transition hover:bg-uber-gray-200 active:scale-[0.98];
+  @apply inline-flex items-center justify-center gap-2 rounded-full border border-tc-gray-200 bg-white px-6 py-3.5 text-[15px] font-semibold text-tc-navy transition hover:border-tc-navy active:scale-[0.98];
 }
 .btn-light {
-  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3.5 text-[15px] font-medium text-black transition hover:bg-uber-gray-100 active:scale-[0.98];
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-[15px] font-semibold text-tc-navy transition hover:bg-tc-gray-100 active:scale-[0.98];
+}
+.eyebrow {
+  @apply text-sm font-semibold uppercase tracking-[0.16em] text-tc-blue;
 }
 .select {
   appearance: none;
   padding-right: 2.75rem;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23253342' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
   background-size: 20px;

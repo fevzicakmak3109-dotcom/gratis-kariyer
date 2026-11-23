@@ -2,18 +2,18 @@
  * Edge (middleware) ve Node ortamında çalışan, Web Crypto tabanlı
  * HMAC imzalı oturum çerezi.
  */
-export const SESSION_COOKIE = "uber_admin_session";
+export const SESSION_COOKIE = "tc_admin_session";
 const SESSION_TTL_SECONDS = 60 * 60 * 8; // 8 saat
 
 export function adminCredentials() {
   return {
     username: process.env.ADMIN_USERNAME ?? "admin",
-    password: process.env.ADMIN_PASSWORD ?? "Uber2026!",
+    password: process.env.ADMIN_PASSWORD ?? "Turkcell2026!",
   };
 }
 
 function secret() {
-  return process.env.ADMIN_SESSION_SECRET ?? "uber-kariyer-dev-secret-change-me";
+  return process.env.ADMIN_SESSION_SECRET ?? "turkcell-kariyer-dev-secret-change-me";
 }
 
 const enc = new TextEncoder();

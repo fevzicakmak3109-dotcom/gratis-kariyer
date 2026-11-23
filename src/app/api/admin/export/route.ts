@@ -1,5 +1,5 @@
 import { listApplications } from "@/lib/storage";
-import { businessLineName, experienceLabel } from "@/lib/positions";
+import { availabilityLabel, experienceLabel } from "@/lib/positions";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,7 +12,7 @@ const cell = (v: unknown) => {
 
 export async function GET() {
   const items = await listApplications();
-  const header = ["Tarih", "Ad", "Soyad", "E-posta", "Telefon", "Yönlendirilen Ekip", "Başvuru", "Deneyim", "CV", "Şehir", "LinkedIn", "Not"];
+  const header = ["Tarih", "Ad", "Soyad", "E-posta", "Telefon", "Pozisyon", "Vakit", "Deneyim", "Arandı", "Şehir", "LinkedIn", "Not"];
   const rows = items.map((a) =>
     [
       new Date(a.createdAt).toLocaleString("tr-TR"),
@@ -20,10 +20,10 @@ export async function GET() {
       a.lastName,
       a.email,
       a.phone,
-      businessLineName(a.businessLine),
       a.role,
+      availabilityLabel(a.availability),
       experienceLabel(a.experience),
-      a.cv ? "Var" : "Yok",
+      a.called ? "Evet" : "Hayır",
       a.city,
       a.linkedin ?? "",
       a.notes,
@@ -33,7 +33,7 @@ export async function GET() {
   return new Response(csv, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="uber-basvurular-${new Date().toISOString().slice(0, 10)}.csv"`,
+      "Content-Disposition": `attachment; filename="turkcell-cagri-merkezi-basvurular-${new Date().toISOString().slice(0, 10)}.csv"`,
     },
   });
 }

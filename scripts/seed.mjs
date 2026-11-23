@@ -1,5 +1,5 @@
-// Demo verisi: admin panelini örnek başvurularla doldurur.  Kullanım: npm run seed
-// .env.local içinde Supabase bilgileri varsa Supabase'e, yoksa data/ klasörüne yazar.
+// Demo verisi: admin panelini örnek çağrı merkezi başvurularıyla doldurur.  Kullanım: npm run seed
+// .env.local içinde Supabase bilgileri varsa Supabase'e (fs_docs / turkcell_applications), yoksa data/ klasörüne yazar.
 import { promises as fs } from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
@@ -7,50 +7,27 @@ import { createClient } from "@supabase/supabase-js";
 
 try { process.loadEnvFile(".env.local"); } catch {}
 
-function pdf(text) {
-  const stream = `BT /F1 20 Tf 72 720 Td (${text}) Tj ET`;
-  const objs = [
-    "<< /Type /Catalog /Pages 2 0 R >>",
-    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
-    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>",
-    `<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`,
-    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
-  ];
-  let out = "%PDF-1.4\n";
-  const offs = [];
-  objs.forEach((o, i) => { offs.push(out.length); out += `${i + 1} 0 obj\n${o}\nendobj\n`; });
-  const x = out.length;
-  out += `xref\n0 ${objs.length + 1}\n0000000000 65535 f \n` + offs.map((o) => String(o).padStart(10, "0") + " 00000 n \n").join("");
-  out += `trailer\n<< /Size ${objs.length + 1} /Root 1 0 R >>\nstartxref\n${x}\n%%EOF`;
-  return Buffer.from(out, "latin1");
-}
-
 const ascii = (s) => s.toLowerCase().replace(/ı/g, "i").replace(/ş/g, "s").replace(/ç/g, "c").replace(/ö/g, "o").replace(/ü/g, "u").replace(/ğ/g, "g").replace(/i̇/g, "i");
 
+// ad, soyad, şehir, vakit, deneyim, not
 const people = [
-  ["Elif", "Yıldız", "tech-hub", "Yazılım Mühendisi", "İstanbul", "interview", "Go ve dağıtık sistemlerde 5 yıl deneyim."],
-  ["Mert", "Kaya", "uber-eats", "Şehir Operasyon Uzmanı", "Ankara", "new", ""],
-  ["Zeynep", "Demir", "tech-hub", "Veri Bilimci", "İstanbul", "reviewing", "Talep tahmini ve fiyatlandırma modelleri üzerinde çalıştım."],
-  ["Can", "Şahin", "mobility", "Taksi Sürücü Partner", "İzmir", "new", ""],
-  ["Ayşe", "Çelik", "business", "Kurumsal Satış Yöneticisi", "İstanbul", "offer", "B2B SaaS satışında 7 yıl."],
-  ["Burak", "Öztürk", "ops-support", "Güven & Güvenlik", "Bursa", "rejected", ""],
-  ["Selin", "Arslan", "corporate", "Pazarlama Uzmanı", "İstanbul", "new", "Yemek teslimat sektöründe marka iletişimi."],
-  ["Emre", "Koç", "uber-eats", "Kurye Partner", "Antalya", "reviewing", ""],
+  ["Zeynep", "Arslan", "İstanbul", "full", "none", "Üniversite mezunuyum, iletişimim güçlü."],
+  ["Emre", "Yılmaz", "Ankara", "part", "1-3", "Daha önce bir e-ticaret firmasında müşteri hizmetlerinde çalıştım."],
+  ["Elif", "Demir", "İzmir", "weekend", "none", ""],
+  ["Burak", "Kaya", "Bursa", "full", "3-5", "Çağrı merkezinde 4 yıl deneyimim var."],
+  ["Merve", "Çelik", "Konya", "flex", "lt1", "Öğrenciyim, akşamları ve hafta sonları müsaitim."],
+  ["Can", "Öztürk", "Trabzon", "full", "none", ""],
 ];
 
-const items = people.map(([fn, ln, line, role, city, status, msg], i) => {
-  const id = randomUUID();
-  const created = new Date(Date.now() - i * 1.3 * 864e5).toISOString();
+const items = people.map(([fn, ln, city, availability, experience, msg], i) => {
+  const created = new Date(Date.now() - i * 0.9 * 864e5).toISOString();
   return {
-    id, firstName: fn, lastName: ln,
+    id: randomUUID(), firstName: fn, lastName: ln,
     email: `${ascii(fn)}.${ascii(ln)}@example.com`,
     phone: `+90 5${30 + i} ${100 + i * 7} ${10 + i} ${20 + i}`,
-    businessLine: line, role, city,
-    ...(i % 2 ? {} : { linkedin: `https://linkedin.com/in/demo-${i}` }),
+    availability, role: "Çağrı Merkezi Müşteri Temsilcisi", city, experience,
     ...(msg ? { message: msg } : {}),
-    experience: ["3-5", "1-3", "5-10", "lt1", "10+", "1-3", "3-5", "1-3"][i % 8],
-    cv: { originalName: `${fn}_${ln}_CV.pdf`, storedName: `${id}.pdf`, size: 0, mimeType: "application/pdf" },
-    status, notes: status === "interview" ? "Teknik mülakat 18 Kasım 14:00." : "",
+    cv: null, status: "new", called: i % 3 === 1, notes: "",
     createdAt: created, updatedAt: created,
   };
 });
@@ -60,25 +37,12 @@ const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (url && key) {
   const sb = createClient(url, key, { auth: { persistSession: false } });
-  const bucket = process.env.SUPABASE_CV_BUCKET ?? "uber-cvs";
-  for (const a of items) {
-    const buf = pdf(`${ascii(a.firstName)} ${ascii(a.lastName)} - Demo CV`);
-    a.cv.size = buf.length;
-    const up = await sb.storage.from(bucket).upload(a.cv.storedName, buf, { contentType: "application/pdf" });
-    if (up.error) throw up.error;
-  }
-  const { error } = await sb.from("fs_docs").insert(items.map((a) => ({ collection: "uber_applications", id: a.id, data: a })));
+  const { error } = await sb.from("fs_docs").insert(items.map((a) => ({ collection: "turkcell_applications", id: a.id, data: a })));
   if (error) throw error;
-  console.log(`${items.length} demo başvuru Supabase'e eklendi (fs_docs / uber_applications).`);
+  console.log(`${items.length} demo başvuru Supabase'e eklendi (fs_docs / turkcell_applications).`);
 } else {
   const DATA = process.env.DATA_DIR ?? path.join(process.cwd(), "data");
-  const CV = path.join(DATA, "cv");
-  await fs.mkdir(CV, { recursive: true });
-  for (const a of items) {
-    const buf = pdf(`${ascii(a.firstName)} ${ascii(a.lastName)} - Demo CV`);
-    a.cv.size = buf.length;
-    await fs.writeFile(path.join(CV, a.cv.storedName), buf);
-  }
+  await fs.mkdir(DATA, { recursive: true });
   const file = path.join(DATA, "applications.json");
   const existing = JSON.parse(await fs.readFile(file, "utf8").catch(() => "[]"));
   await fs.writeFile(file, JSON.stringify([...existing, ...items], null, 2));

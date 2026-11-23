@@ -14,7 +14,8 @@ export type Application = {
   lastName: string;
   email: string;
   phone: string;
-  businessLine: string;
+  /** AVAILABILITY_OPTIONS id: ne kadar vakit ayırabildiği. */
+  availability: string;
   role: string;
   city: string;
   linkedin?: string;
