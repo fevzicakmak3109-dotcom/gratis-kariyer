@@ -73,7 +73,7 @@ export function Hero() {
           </p>
 
           <div className="mt-8 flex animate-[fadeUp_.7s_.45s_ease-out_both] flex-col gap-3 sm:flex-row">
-            <a href="#basvuru" className="btn-primary px-8 py-4 text-base">Hemen başvur <ArrowRight className="size-5" /></a>
+            <a id="hero-cta" href="#basvuru" className="btn-primary px-8 py-4 text-base">Hemen başvur <ArrowRight className="size-5" /></a>
             <a href="#pozisyon" className="btn-secondary px-8 py-4 text-base">Nasıl çalışır?</a>
           </div>
 

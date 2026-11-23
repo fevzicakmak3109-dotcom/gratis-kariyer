@@ -3,11 +3,27 @@ import { useEffect, useState } from "react";
 import { ArrowRight } from "./icons";
 
 /** Mobilde ekranın altında sabit duran "Hemen başvur" butonu.
- *  Başvuru formu veya footer görünürken gizlenir (form zaten ekranda). */
+ *  Hero'daki "Hemen başvur" butonu ekrandayken gizlidir (iki buton üst üste görünmesin);
+ *  kaydırıp o buton kaybolunca aşağıdan kayarak gelir, yukarı dönünce yine kayarak gider.
+ *  Başvuru formu veya footer görünürken de gizlenir. */
 export function MobileApplyButton() {
-  const [hidden, setHidden] = useState(false);
+  const [heroCta, setHeroCta] = useState(true);
+  const [nearForm, setNearForm] = useState(false);
+  const hidden = heroCta || nearForm;
 
   useEffect(() => {
+    const ios: IntersectionObserver[] = [];
+
+    // Hero butonu: üstteki 64px'lik menü çubuğunun altında kalan kısım görünür sayılmaz.
+    const cta = document.getElementById("hero-cta");
+    if (cta) {
+      const io = new IntersectionObserver(([e]) => setHeroCta(e.isIntersecting || e.boundingClientRect.top > window.innerHeight), {
+        rootMargin: "-64px 0px 0px 0px",
+      });
+      io.observe(cta);
+      ios.push(io);
+    } else setHeroCta(false);
+
     const targets = [document.getElementById("basvuru"), document.querySelector("footer")].filter(
       (el): el is HTMLElement => !!el,
     );
@@ -18,18 +34,19 @@ export function MobileApplyButton() {
           if (e.isIntersecting) visible.add(e.target);
           else visible.delete(e.target);
         }
-        setHidden(visible.size > 0);
+        setNearForm(visible.size > 0);
       },
       { rootMargin: "0px 0px -20% 0px" },
     );
     targets.forEach((t) => io.observe(t));
-    return () => io.disconnect();
+    ios.push(io);
+    return () => ios.forEach((o) => o.disconnect());
   }, []);
 
   return (
     <div
-      className={`fixed inset-x-4 z-40 transition-all duration-300 md:hidden ${
-        hidden ? "pointer-events-none translate-y-6 opacity-0" : "translate-y-0 opacity-100"
+      className={`fixed inset-x-4 z-40 transition-[transform,opacity] duration-500 ease-[cubic-bezier(.2,.8,.2,1)] md:hidden ${
+        hidden ? "pointer-events-none translate-y-[calc(100%+2rem)] opacity-0" : "translate-y-0 opacity-100"
       }`}
       style={{ bottom: "calc(1rem + env(safe-area-inset-bottom))" }}
       aria-hidden={hidden}
