@@ -54,7 +54,7 @@ export function MobileApplyButton() {
       <a
         href="#basvuru"
         tabIndex={hidden ? -1 : 0}
-        className="flex w-full items-center justify-center gap-2 rounded-2xl bg-tc-yellow py-4 text-base font-bold text-tc-navy shadow-[0_12px_30px_-6px_rgba(37,51,66,0.45)] ring-1 ring-tc-yellow-600/40 transition active:scale-[0.98]"
+        className="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-accent py-4 text-base font-bold text-brand-ink shadow-[0_12px_30px_-6px_rgba(74,14,111,0.45)] ring-1 ring-brand-accent-600/40 transition active:scale-[0.98]"
       >
         Hemen başvur <ArrowRight className="size-5" />
       </a>

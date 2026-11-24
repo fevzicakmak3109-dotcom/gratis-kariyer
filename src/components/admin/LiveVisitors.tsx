@@ -46,8 +46,8 @@ export function LiveVisitors() {
       aria-live="polite"
     >
       <span className="relative flex size-2.5">
-        {live && <span className="absolute inline-flex size-full animate-ping rounded-full bg-tc-green opacity-75" />}
-        <span className={`relative inline-flex size-2.5 rounded-full ${live ? "bg-tc-green" : "bg-white/50"}`} />
+        {live && <span className="absolute inline-flex size-full animate-ping rounded-full bg-brand-green opacity-75" />}
+        <span className={`relative inline-flex size-2.5 rounded-full ${live ? "bg-brand-green" : "bg-white/50"}`} />
       </span>
       <span className={`font-semibold tabular-nums transition-transform duration-300 ${bump ? "scale-125" : ""}`}>
         {count ?? "–"}

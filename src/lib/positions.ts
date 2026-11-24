@@ -22,10 +22,10 @@ export const CITIES = [
 
 /** "Ne kadar vakit ayırabilirsin?" sorusunun seçenekleri. */
 export const AVAILABILITY_OPTIONS = [
-  { id: "full", label: "Tam zamanlı", hint: "Haftada 45 saat", color: "#2855AC" },
-  { id: "part", label: "Yarı zamanlı", hint: "Günde 4–6 saat", color: "#FFC900" },
+  { id: "full", label: "Tam zamanlı", hint: "Haftada 45 saat", color: "#851F8F" },
+  { id: "part", label: "Yarı zamanlı", hint: "Günde 4–6 saat", color: "#F7E200" },
   { id: "weekend", label: "Hafta sonu", hint: "Cumartesi – Pazar", color: "#12B76A" },
-  { id: "flex", label: "Esnek", hint: "Vardiyama göre", color: "#8E9FAD" },
+  { id: "flex", label: "Esnek", hint: "Vardiyama göre", color: "#9C8DA3" },
 ] as const;
 
 export function availabilityLabel(id?: string) {

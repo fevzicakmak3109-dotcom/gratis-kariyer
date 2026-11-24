@@ -11,22 +11,22 @@ const QA = [
 
 export function Faq() {
   return (
-    <section id="sss" className="scroll-mt-20 bg-tc-gray-50 py-20 sm:py-28">
+    <section id="sss" className="scroll-mt-20 bg-brand-gray-50 py-20 sm:py-28">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1fr_1.6fr] lg:px-8">
         <Reveal>
           <p className="eyebrow">SSS</p>
           <h2 className="mt-3 text-4xl font-bold tracking-[-0.03em] sm:text-5xl">Aklına takılanlar.</h2>
-          <p className="mt-4 text-tc-gray-600">Başka bir sorun mu var? Başvurunu yap, ekibimiz seni arayınca hepsini konuşalım.</p>
+          <p className="mt-4 text-brand-gray-600">Başka bir sorun mu var? Başvurunu yap, ekibimiz seni arayınca hepsini konuşalım.</p>
         </Reveal>
         <div className="space-y-3">
           {QA.map((x, i) => (
             <Reveal key={x.q} delay={i * 60}>
-              <details className="group rounded-2xl bg-white px-5 py-1 shadow-[0_1px_0_rgba(37,51,66,0.04)] open:shadow-[0_12px_30px_-18px_rgba(40,85,172,0.4)] sm:px-6">
+              <details className="group rounded-2xl bg-white px-5 py-1 shadow-[0_1px_0_rgba(74,14,111,0.04)] open:shadow-[0_12px_30px_-18px_rgba(133,31,143,0.4)] sm:px-6">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-[17px] font-semibold [&::-webkit-details-marker]:hidden">
                   {x.q}
-                  <span className="grid size-8 shrink-0 place-items-center rounded-full bg-tc-gray-100 text-xl text-tc-blue transition group-open:rotate-45 group-open:bg-tc-yellow group-open:text-tc-navy">+</span>
+                  <span className="grid size-8 shrink-0 place-items-center rounded-full bg-brand-gray-100 text-xl text-brand-primary transition group-open:rotate-45 group-open:bg-brand-accent group-open:text-brand-ink">+</span>
                 </summary>
-                <p className="pb-5 pr-10 text-[15px] leading-relaxed text-tc-gray-600">{x.a}</p>
+                <p className="pb-5 pr-10 text-[15px] leading-relaxed text-brand-gray-600">{x.a}</p>
               </details>
             </Reveal>
           ))}

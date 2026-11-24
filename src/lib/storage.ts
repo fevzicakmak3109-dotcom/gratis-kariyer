@@ -7,13 +7,13 @@ import type { Application } from "./types";
 /**
  * Depolama katmanı.
  *
- * - Supabase (varsayılan): başvurular `fs_docs` tablosunda `turkcell_applications`
- *   koleksiyonu olarak, CV'ler private `turkcell-cvs` bucket'ında tutulur.
+ * - Supabase (varsayılan): başvurular `fs_docs` tablosunda `gratis_applications`
+ *   koleksiyonu olarak, CV'ler private `gratis-cvs` bucket'ında tutulur.
  *   Yalnızca sunucuda, service role anahtarıyla erişilir; anahtar tarayıcıya gitmez.
  * - Yerel dosya (yedek): Supabase ortam değişkenleri yoksa `data/` klasörü kullanılır.
  */
-const COLLECTION = "turkcell_applications";
-const BUCKET = process.env.SUPABASE_CV_BUCKET ?? "turkcell-cvs";
+const COLLECTION = "gratis_applications";
+const BUCKET = process.env.SUPABASE_CV_BUCKET ?? "gratis-cvs";
 
 let client: SupabaseClient | null = null;
 export function supabase() {

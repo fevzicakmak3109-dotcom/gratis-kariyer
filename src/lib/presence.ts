@@ -6,10 +6,10 @@ import { supabase } from "./storage";
  *
  * Ana sayfa açıkken (ve sekme görünürken) tarayıcı 30 saniyede bir küçük bir
  * "buradayım" sinyali gönderir. Her ziyaretçi, rastgele bir oturum kimliğiyle
- * `fs_docs` tablosunda `turkcell_presence` koleksiyonunda tek satır tutar; son
+ * `fs_docs` tablosunda `gratis_presence` koleksiyonunda tek satır tutar; son
  * ACTIVE_MS içinde sinyal gönderenler "aktif" sayılır. Kişisel veri saklanmaz.
  */
-const COLLECTION = "turkcell_presence";
+const COLLECTION = "gratis_presence";
 export const HEARTBEAT_MS = 30_000;
 const ACTIVE_MS = 75_000; // bir sinyal kaçsa bile ziyaretçi düşmesin
 const CLEANUP_MS = 10 * 60_000;

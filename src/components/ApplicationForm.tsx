@@ -103,35 +103,35 @@ export function ApplicationForm() {
   }
 
   const err = (k: string) =>
-    errors[k] ? <p id={`${k}-err`} className="mt-1.5 text-[13px] font-medium text-tc-red">{errors[k]}</p> : null;
+    errors[k] ? <p id={`${k}-err`} className="mt-1.5 text-[13px] font-medium text-brand-red">{errors[k]}</p> : null;
   const aria = (k: string) => ({ "aria-invalid": !!errors[k], "aria-describedby": errors[k] ? `${k}-err` : undefined });
 
   return (
-    <section id="basvuru" className="relative scroll-mt-20 overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#eef3fc_100%)] py-20 sm:py-28">
+    <section id="basvuru" className="relative scroll-mt-20 overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#F7EDF6_100%)] py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto mb-10 max-w-2xl text-center sm:mb-14">
           <p className="eyebrow">Başvuru formu</p>
           <h2 className="mt-3 text-4xl font-bold tracking-[-0.03em] sm:text-6xl">
-            Kariyerin <span className="relative whitespace-nowrap text-tc-blue">burada<svg className="absolute -bottom-1.5 left-0 w-full text-tc-yellow" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden><path d="M2 9 C 60 2, 140 2, 198 7" fill="none" stroke="currentColor" strokeWidth="6" strokeLinecap="round" /></svg></span> başlıyor.
+            Kariyerin <span className="relative whitespace-nowrap text-brand-primary">burada<svg className="absolute -bottom-1.5 left-0 w-full text-brand-pink" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden><path d="M2 9 C 60 2, 140 2, 198 7" fill="none" stroke="currentColor" strokeWidth="6" strokeLinecap="round" /></svg></span> başlıyor.
           </h2>
-          <p className="mt-4 text-lg text-tc-gray-600">2 dakikada başvur, gerisini bize bırak. Deneyimin olsun ya da olmasın, seni bekliyoruz.</p>
+          <p className="mt-4 text-lg text-brand-gray-600">2 dakikada başvur, gerisini bize bırak. Deneyimin olsun ya da olmasın, seni bekliyoruz.</p>
         </div>
-        <div className="overflow-hidden rounded-[28px] bg-white shadow-[0_30px_80px_-40px_rgba(40,85,172,0.45)] ring-1 ring-tc-gray-100 lg:grid lg:grid-cols-[0.85fr_1.4fr]">
+        <div className="overflow-hidden rounded-[28px] bg-white shadow-[0_30px_80px_-40px_rgba(133,31,143,0.45)] ring-1 ring-brand-gray-100 lg:grid lg:grid-cols-[0.85fr_1.4fr]">
           {/* Sol panel */}
-          <aside className="relative overflow-hidden bg-[linear-gradient(160deg,#3561c4_0%,#2855ac_45%,#1b3778_100%)] p-8 text-white sm:p-10">
+          <aside className="relative overflow-hidden bg-[linear-gradient(160deg,#A242A4_0%,#851F8F_45%,#4A0E6F_100%)] p-8 text-white sm:p-10">
             <div className="hex absolute -bottom-20 -right-16 size-64 bg-white/[0.06]" aria-hidden />
-            <div className="hex absolute -right-6 bottom-24 size-16 animate-float bg-tc-yellow/90" aria-hidden />
+            <div className="hex absolute -right-6 bottom-24 size-16 animate-float bg-brand-accent/90" aria-hidden />
             <div className="relative flex items-center gap-3">
-              <span className="relative grid size-12 place-items-center rounded-2xl bg-tc-yellow text-tc-navy">
+              <span className="relative grid size-12 place-items-center rounded-2xl bg-brand-accent text-brand-ink">
                 <Headset className="size-6" />
-                <span className="absolute -right-1 -top-1 flex size-3.5"><span className="absolute inline-flex size-full animate-ping rounded-full bg-tc-green opacity-75" /><span className="relative inline-flex size-3.5 rounded-full border-2 border-white bg-tc-green" /></span>
+                <span className="absolute -right-1 -top-1 flex size-3.5"><span className="absolute inline-flex size-full animate-ping rounded-full bg-brand-green opacity-75" /><span className="relative inline-flex size-3.5 rounded-full border-2 border-white bg-brand-green" /></span>
               </span>
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.14em] text-white/60">Pozisyon</p>
                 <p className="font-bold leading-tight">{ROLE}</p>
               </div>
             </div>
-            <h3 className="relative mt-8 text-3xl font-bold tracking-[-0.02em] sm:text-4xl sm:leading-[1.1]">Turkcell&apos;in sesi olmaya hazır mısın?</h3>
+            <h3 className="relative mt-8 text-3xl font-bold tracking-[-0.02em] sm:text-4xl sm:leading-[1.1]">Gratis&apos;in sesi olmaya hazır mısın?</h3>
             <p className="relative mt-4 text-[15px] leading-relaxed text-white/75">
               Formu doldur; İK ekibimiz başvurunu inceleyip en kısa sürede seni telefonla arasın.
             </p>
@@ -151,14 +151,14 @@ export function ApplicationForm() {
             {status === "done" ? (
               <div className="flex h-full min-h-[480px] flex-col items-center justify-center text-center">
                 <span className="relative grid size-24 place-items-center">
-                  <span className="absolute inset-0 animate-ring rounded-full bg-tc-yellow" />
-                  <span className="relative grid size-20 place-items-center rounded-full bg-tc-yellow text-tc-navy"><Phone className="size-9 animate-shake" /></span>
+                  <span className="absolute inset-0 animate-ring rounded-full bg-brand-accent" />
+                  <span className="relative grid size-20 place-items-center rounded-full bg-brand-accent text-brand-ink"><Phone className="size-9 animate-shake" /></span>
                 </span>
                 <h3 className="mt-6 text-3xl font-bold tracking-tight">Teşekkürler, {name}!</h3>
-                <p className="mt-3 max-w-md text-tc-gray-600">
+                <p className="mt-3 max-w-md text-brand-gray-600">
                   Başvurun bize ulaştı. İK ekibimiz birkaç iş günü içinde seni telefonla arayacak; telefonun açık olsun! 📞
                 </p>
-                <p className="mt-2 font-bold text-tc-yellow-600">#senyapdiye</p>
+                <p className="mt-2 font-bold text-brand-pink">#İşinGücünGüzellik</p>
                 <button onClick={reset} className="btn-secondary mt-8">Yeni başvuru yap</button>
               </div>
             ) : (
@@ -178,11 +178,11 @@ export function ApplicationForm() {
                 {/* ilerleme */}
                 <div className="sm:col-span-2">
                   <div className="flex items-center justify-between text-[13px] font-semibold">
-                    <span className="text-tc-gray-600">{progress === 1 ? "Hazırsın, gönderebilirsin! 🎉" : "Formu doldur"}</span>
-                    <span className="tabular-nums text-tc-blue">%{Math.round(progress * 100)}</span>
+                    <span className="text-brand-gray-600">{progress === 1 ? "Hazırsın, gönderebilirsin! 🎉" : "Formu doldur"}</span>
+                    <span className="tabular-nums text-brand-primary">%{Math.round(progress * 100)}</span>
                   </div>
-                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-tc-gray-100">
-                    <div className={`h-full rounded-full transition-all duration-500 ${progress === 1 ? "bg-tc-green" : "bg-tc-yellow"}`} style={{ width: `${Math.max(4, progress * 100)}%` }} />
+                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-brand-gray-100">
+                    <div className={`h-full rounded-full transition-all duration-500 ${progress === 1 ? "bg-brand-green" : "bg-brand-accent"}`} style={{ width: `${Math.max(4, progress * 100)}%` }} />
                   </div>
                 </div>
 
@@ -221,7 +221,7 @@ export function ApplicationForm() {
                   {err("city")}
                 </div>
                 <div>
-                  <label htmlFor="linkedin" className="label">LinkedIn <span className="font-normal text-tc-gray-600">(isteğe bağlı)</span></label>
+                  <label htmlFor="linkedin" className="label">LinkedIn <span className="font-normal text-brand-gray-600">(isteğe bağlı)</span></label>
                   <input id="linkedin" name="linkedin" type="url" inputMode="url" className="input" placeholder="https://linkedin.com/in/..." {...aria("linkedin")} />
                   {err("linkedin")}
                 </div>
@@ -235,17 +235,17 @@ export function ApplicationForm() {
                       return (
                         <label
                           key={o.id}
-                          className={`flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 px-3 py-3.5 text-center transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-tc-blue ${
+                          className={`flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 px-3 py-3.5 text-center transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-primary ${
                             active
-                              ? "border-tc-blue bg-tc-blue text-white shadow-[0_10px_24px_-12px_rgba(40,85,172,0.8)]"
+                              ? "border-brand-primary bg-brand-primary text-white shadow-[0_10px_24px_-12px_rgba(133,31,143,0.8)]"
                               : errors.availability
-                                ? "border-tc-red bg-white hover:bg-tc-gray-50"
-                                : "border-tc-gray-100 bg-white hover:border-tc-blue/40"
+                                ? "border-brand-red bg-white hover:bg-brand-gray-50"
+                                : "border-brand-gray-100 bg-white hover:border-brand-primary/40"
                           }`}
                         >
                           <input type="radio" name="availability" value={o.id} checked={active} onChange={() => setAvailability(o.id)} className="sr-only" {...aria("availability")} />
                           <span className="text-[15px] font-semibold">{o.label}</span>
-                          <span className={`mt-0.5 text-[12px] ${active ? "text-white/75" : "text-tc-gray-400"}`}>{o.hint}</span>
+                          <span className={`mt-0.5 text-[12px] ${active ? "text-white/75" : "text-brand-gray-400"}`}>{o.hint}</span>
                         </label>
                       );
                     })}
@@ -255,19 +255,19 @@ export function ApplicationForm() {
 
                 {/* Deneyim */}
                 <fieldset className="sm:col-span-2" id="field-experience">
-                  <legend className="label">Kaç yıl iş deneyimin var? * <span className="font-normal text-tc-gray-600">Deneyimin yoksa da başvurabilirsin.</span></legend>
+                  <legend className="label">Kaç yıl iş deneyimin var? * <span className="font-normal text-brand-gray-600">Deneyimin yoksa da başvurabilirsin.</span></legend>
                   <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                     {EXPERIENCE_OPTIONS.map((o) => {
                       const active = experience === o.id;
                       return (
                         <label
                           key={o.id}
-                          className={`flex cursor-pointer items-center justify-center rounded-2xl border-2 px-3 py-3 text-center text-[14px] font-semibold transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-tc-blue ${
+                          className={`flex cursor-pointer items-center justify-center rounded-2xl border-2 px-3 py-3 text-center text-[14px] font-semibold transition has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-primary ${
                             active
-                              ? "border-tc-blue bg-tc-blue text-white"
+                              ? "border-brand-primary bg-brand-primary text-white"
                               : errors.experience
-                                ? "border-tc-red bg-white hover:bg-tc-gray-50"
-                                : "border-tc-gray-100 bg-white hover:border-tc-blue/40"
+                                ? "border-brand-red bg-white hover:bg-brand-gray-50"
+                                : "border-brand-gray-100 bg-white hover:border-brand-primary/40"
                           }`}
                         >
                           <input
@@ -289,7 +289,7 @@ export function ApplicationForm() {
                   </div>
                   {err("experience")}
                   {CV_UPLOAD_ENABLED && experience === NO_EXPERIENCE && (
-                    <p className="mt-3 rounded-xl bg-tc-gray-50 px-4 py-3 text-[14px] leading-relaxed text-tc-gray-600">
+                    <p className="mt-3 rounded-xl bg-brand-gray-50 px-4 py-3 text-[14px] leading-relaxed text-brand-gray-600">
                       Sorun değil, herkes bir yerden başlar. Deneyimin olmadığı için CV yüklemene gerek yok; aşağıda kendinden kısaca bahsetmen yeterli.
                     </p>
                   )}
@@ -300,13 +300,13 @@ export function ApplicationForm() {
                 <div className="sm:col-span-2">
                   <span className="label">CV *</span>
                   {cv ? (
-                    <div className="flex items-center gap-4 rounded-xl border-2 border-tc-blue bg-white p-4">
-                      <span className="grid size-12 shrink-0 place-items-center rounded-lg bg-tc-navy text-white"><FileIcon className="size-6" /></span>
+                    <div className="flex items-center gap-4 rounded-xl border-2 border-brand-primary bg-white p-4">
+                      <span className="grid size-12 shrink-0 place-items-center rounded-lg bg-brand-ink text-white"><FileIcon className="size-6" /></span>
                       <div className="min-w-0 flex-1">
                         <p className="truncate font-semibold">{cv.name}</p>
-                        <p className="text-[13px] text-tc-gray-600">{(cv.size / 1024 / 1024).toFixed(2)} MB · Yüklemeye hazır</p>
+                        <p className="text-[13px] text-brand-gray-600">{(cv.size / 1024 / 1024).toFixed(2)} MB · Yüklemeye hazır</p>
                       </div>
-                      <button type="button" onClick={() => { setCv(null); if (fileRef.current) fileRef.current.value = ""; }} className="grid size-9 place-items-center rounded-full hover:bg-tc-gray-100" aria-label="CV'yi kaldır">
+                      <button type="button" onClick={() => { setCv(null); if (fileRef.current) fileRef.current.value = ""; }} className="grid size-9 place-items-center rounded-full hover:bg-brand-gray-100" aria-label="CV'yi kaldır">
                         <Close className="size-5" />
                       </button>
                     </div>
@@ -318,13 +318,13 @@ export function ApplicationForm() {
                       onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
                       onDragLeave={() => setDrag(false)}
                       onDrop={(e) => { e.preventDefault(); setDrag(false); pickFile(e.dataTransfer.files[0]); }}
-                      className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-9 text-center outline-none transition focus-visible:border-tc-blue ${
-                        drag ? "border-tc-blue bg-tc-gray-100" : errors.cv ? "border-tc-red bg-white" : "border-tc-gray-200 bg-tc-gray-50 hover:border-tc-gray-400"
+                      className={`flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-6 py-9 text-center outline-none transition focus-visible:border-brand-primary ${
+                        drag ? "border-brand-primary bg-brand-gray-100" : errors.cv ? "border-brand-red bg-white" : "border-brand-gray-200 bg-brand-gray-50 hover:border-brand-gray-400"
                       }`}
                     >
-                      <span className="grid size-12 place-items-center rounded-full bg-tc-navy text-white"><Upload className="size-6" /></span>
+                      <span className="grid size-12 place-items-center rounded-full bg-brand-ink text-white"><Upload className="size-6" /></span>
                       <span className="mt-4 font-semibold">CV&apos;ni sürükle bırak veya <span className="underline underline-offset-4">dosya seç</span></span>
-                      <span className="mt-1 text-[13px] text-tc-gray-600">PDF, DOC, DOCX · En fazla 5 MB</span>
+                      <span className="mt-1 text-[13px] text-brand-gray-600">PDF, DOC, DOCX · En fazla 5 MB</span>
                       <input ref={fileRef} type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" className="sr-only" tabIndex={-1} onChange={(e) => pickFile(e.target.files?.[0])} />
                     </label>
                   )}
@@ -333,24 +333,24 @@ export function ApplicationForm() {
                 )}
 
                 <div className="sm:col-span-2">
-                  <label htmlFor="message" className="label">Kısaca kendinden bahset <span className="font-normal text-tc-gray-600">(isteğe bağlı)</span></label>
+                  <label htmlFor="message" className="label">Kısaca kendinden bahset <span className="font-normal text-brand-gray-600">(isteğe bağlı)</span></label>
                   <textarea id="message" name="message" rows={3} maxLength={1000} className="input resize-none" placeholder="Neden müşteri temsilcisi olmak istiyorsun? Varsa deneyimlerinden bahset." />
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="flex cursor-pointer items-start gap-3 text-[14px] leading-relaxed text-tc-gray-600">
-                    <input name="consent" type="checkbox" className="mt-0.5 size-5 shrink-0 accent-tc-blue" {...aria("consent")} />
+                  <label className="flex cursor-pointer items-start gap-3 text-[14px] leading-relaxed text-brand-gray-600">
+                    <input name="consent" type="checkbox" className="mt-0.5 size-5 shrink-0 accent-brand-primary" {...aria("consent")} />
                     <span>Kişisel verilerimin işe alım süreci kapsamında 6698 sayılı KVKK&apos;ya uygun olarak işlenmesini kabul ediyorum. *</span>
                   </label>
                   {err("consent")}
                 </div>
 
-                {serverError && <p role="alert" className="rounded-lg bg-tc-red/10 px-4 py-3 text-sm font-medium text-tc-red sm:col-span-2">{serverError}</p>}
+                {serverError && <p role="alert" className="rounded-lg bg-brand-red/10 px-4 py-3 text-sm font-medium text-brand-red sm:col-span-2">{serverError}</p>}
 
                 <div className="sm:col-span-2">
                   <button type="submit" disabled={status === "sending"} className="btn-primary w-full py-4 text-base sm:w-auto sm:px-10">
                     {status === "sending" ? (
-                      <><span className="size-5 animate-spin rounded-full border-2 border-tc-navy/30 border-t-tc-navy" /> Gönderiliyor…</>
+                      <><span className="size-5 animate-spin rounded-full border-2 border-brand-ink/30 border-t-brand-ink" /> Gönderiliyor…</>
                     ) : (
                       <>Başvuruyu gönder <ArrowRight className="size-5" /></>
                     )}

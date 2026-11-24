@@ -1,5 +1,5 @@
 // Demo verisi: admin panelini örnek çağrı merkezi başvurularıyla doldurur.  Kullanım: npm run seed
-// .env.local içinde Supabase bilgileri varsa Supabase'e (fs_docs / turkcell_applications), yoksa data/ klasörüne yazar.
+// .env.local içinde Supabase bilgileri varsa Supabase'e (fs_docs / gratis_applications), yoksa data/ klasörüne yazar.
 import { promises as fs } from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
@@ -37,9 +37,9 @@ const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (url && key) {
   const sb = createClient(url, key, { auth: { persistSession: false } });
-  const { error } = await sb.from("fs_docs").insert(items.map((a) => ({ collection: "turkcell_applications", id: a.id, data: a })));
+  const { error } = await sb.from("fs_docs").insert(items.map((a) => ({ collection: "gratis_applications", id: a.id, data: a })));
   if (error) throw error;
-  console.log(`${items.length} demo başvuru Supabase'e eklendi (fs_docs / turkcell_applications).`);
+  console.log(`${items.length} demo başvuru Supabase'e eklendi (fs_docs / gratis_applications).`);
 } else {
   const DATA = process.env.DATA_DIR ?? path.join(process.cwd(), "data");
   await fs.mkdir(DATA, { recursive: true });

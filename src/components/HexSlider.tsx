@@ -4,13 +4,13 @@ import { Cap, Headset, Home, Smile, Trend } from "./icons";
 
 const SLIDES = [
   { icon: Headset, title: "Kariyerin bir çağrı uzağında!" },
-  { icon: Home, title: "Evinin konforunda, Turkcell güvencesiyle!" },
+  { icon: Home, title: "Evinin konforunda, Gratis güvencesiyle!" },
   { icon: Cap, title: "Deneyim şart değil, eğitim bizden!" },
   { icon: Smile, title: "Her çağrıda bir gülümseme!" },
   { icon: Trend, title: "Sıfırdan başla, liderliğe yüksel!" },
 ];
 
-/** Turkcell Kariyerim'deki dönen altıgen slaytın çağrı merkezi uyarlaması. */
+/** Dönen altıgen slayt (otomatik geçiş, kaydırma ve nokta göstergesi). */
 export function HexSlider() {
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -25,7 +25,7 @@ export function HexSlider() {
   const go = (d: number) => setI((x) => (x + d + SLIDES.length) % SLIDES.length);
 
   return (
-    <section className="overflow-hidden bg-white py-20 sm:py-28" aria-roledescription="carousel" aria-label="Turkcell Çağrı Merkezi">
+    <section className="overflow-hidden bg-white py-20 sm:py-28" aria-roledescription="carousel" aria-label="Gratis Çağrı Merkezi">
       <div
         className="relative mx-auto max-w-3xl px-4"
         onMouseEnter={() => setPaused(true)}
@@ -46,21 +46,21 @@ export function HexSlider() {
             viewBox="0 0 100 100"
             aria-hidden
           >
-            <polygon points="50,6 88,28 88,72 50,94 12,72 12,28" fill="#8fb0ec" stroke="#8fb0ec" strokeWidth="10" strokeLinejoin="round" />
+            <polygon points="50,6 88,28 88,72 50,94 12,72 12,28" fill="#D9A6DA" stroke="#D9A6DA" strokeWidth="10" strokeLinejoin="round" />
           </svg>
 
           {/* Düzgün, yuvarlak köşeli altıgen: her slaytta 60° döner */}
           <svg
-            className="absolute left-1/2 top-1/2 size-[300px] drop-shadow-[0_30px_40px_rgba(40,85,172,0.35)] transition-transform duration-[1000ms] ease-[cubic-bezier(.2,.8,.2,1)] sm:size-[400px]"
+            className="absolute left-1/2 top-1/2 size-[300px] drop-shadow-[0_30px_40px_rgba(133,31,143,0.35)] transition-transform duration-[1000ms] ease-[cubic-bezier(.2,.8,.2,1)] sm:size-[400px]"
             style={{ transform: `translate(-50%,-50%) rotate(${i * 60 - 8}deg)` }}
             viewBox="0 0 100 100"
             aria-hidden
           >
             <defs>
               <linearGradient id="hexg" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stopColor="#3a63c8" />
-                <stop offset="0.55" stopColor="#2855ac" />
-                <stop offset="1" stopColor="#22408f" />
+                <stop offset="0" stopColor="#A242A4" />
+                <stop offset="0.55" stopColor="#851F8F" />
+                <stop offset="1" stopColor="#5E1680" />
               </linearGradient>
             </defs>
             <polygon points="50,6 88,28 88,72 50,94 12,72 12,28" fill="url(#hexg)" stroke="url(#hexg)" strokeWidth="10" strokeLinejoin="round" />
@@ -75,7 +75,7 @@ export function HexSlider() {
               aria-hidden={k !== i}
             >
               <span
-                className={`-ml-7 grid size-20 shrink-0 place-items-center rounded-full bg-tc-yellow text-tc-navy shadow-[0_0_0_8px_rgba(255,201,0,0.28),0_14px_30px_rgba(0,0,0,0.3)] transition-transform duration-700 sm:-ml-12 sm:size-28 ${
+                className={`-ml-7 grid size-20 shrink-0 place-items-center rounded-full bg-brand-accent text-brand-ink shadow-[0_0_0_8px_rgba(247,226,0,0.28),0_14px_30px_rgba(0,0,0,0.3)] transition-transform duration-700 sm:-ml-12 sm:size-28 ${
                   k === i ? "scale-100" : "scale-50"
                 }`}
               >
@@ -87,7 +87,7 @@ export function HexSlider() {
                 }`}
               >
                 {s.title}
-                <span className="mt-1 block text-tc-yellow">#senyapdiye</span>
+                <span className="mt-1 block text-brand-accent">#İşinGücünGüzellik</span>
               </p>
             </div>
           ))}
@@ -101,7 +101,7 @@ export function HexSlider() {
               aria-selected={k === i}
               aria-label={`${k + 1}. slayt`}
               onClick={() => setI(k)}
-              className={`h-1.5 rounded-full transition-all duration-500 ${k === i ? "w-10 bg-tc-yellow" : "w-6 bg-tc-gray-100 hover:bg-tc-gray-200"}`}
+              className={`h-1.5 rounded-full transition-all duration-500 ${k === i ? "w-10 bg-brand-accent" : "w-6 bg-brand-gray-100 hover:bg-brand-gray-200"}`}
             />
           ))}
         </div>

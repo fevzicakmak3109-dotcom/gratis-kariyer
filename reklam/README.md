@@ -1,6 +1,6 @@
 # Reklam afişleri
 
-"Deneyim şartı yok, ofise gitme şartı yok — Sadece sen." Turkcell Çağrı Merkezi kampanyası. Her format **mavi** (Turkcell mavisi) ve **beyaz** temada üretilir; QR kod başvuru formuna gider.
+"Deneyim şartı yok, ofise gitme şartı yok — Sadece sen." Gratis Çağrı Merkezi kampanyası. Her format **mor** (Gratis moru) ve **beyaz** temada üretilir; QR kod başvuru formuna gider.
 
 | Dosya | Ölçü | Kullanım |
 | --- | --- | --- |

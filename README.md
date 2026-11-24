@@ -1,19 +1,19 @@
-# Turkcell Kariyer · Çağrı Merkezi Müşteri Temsilcisi
+# Gratis Kariyer · Çağrı Merkezi Müşteri Temsilcisi
 
-Turkcell Çağrı Merkezi'ne **müşteri temsilcisi** alımı için hazırlanmış, **Next.js 15 (App Router) + TypeScript + Tailwind CSS v4 + Supabase** ile yazılmış tek sayfalık kariyer sitesi ve kullanıcı adı / şifreli işe alım paneli.
+Gratis Çağrı Merkezi'ne **müşteri temsilcisi** alımı için hazırlanmış, **Next.js 15 (App Router) + TypeScript + Tailwind CSS v4 + Supabase** ile yazılmış tek sayfalık kariyer sitesi ve kullanıcı adı / şifreli işe alım paneli.
 
-> Bu proje bir aday case çalışmasıdır; Turkcell'in resmi sitesi değildir.
+> Bu proje bir aday case çalışmasıdır; Gratis'in resmi sitesi değildir.
 
-Ana mesaj: **Deneyimli ya da deneyimsiz, yeter ki vakit ayırabil. Evden çalış, Turkcell'de sıfırdan kariyerine başla.** `#senyapdiye`
+Ana mesaj: **Deneyimli ya da deneyimsiz, yeter ki vakit ayırabil. Evden çalış, Gratis'te sıfırdan kariyerine başla.** `#İşinGücünGüzellik`
 
 ## Özellikler
 
 ### Kariyer sitesi (`/`)
-- **Turkcell görsel dili**: [kariyerim.turkcell.com.tr](https://kariyerim.turkcell.com.tr) referans alındı. Lacivert `#253342`, Turkcell mavisi `#2855AC`, sarı `#FFC900`; yuvarlatılmış altıgenler, sarı hap butonlar, Kariyerim logosu
+- **Gratis görsel dili**: [gratis.com](https://www.gratis.com) ve [kariyer.gratis.com](https://kariyer.gratis.com) referans alındı. Koyu mor `#4A0E6F`, mor `#851F8F`, logo sarısı `#F7E200`, pembe `#E0129A`; Figtree yazı tipi, sarı hap butonlar, konuşma balonu logosu
 - **Hero – canlı çağrı animasyonu**: döngüsel olarak çağrı çalar (genişleyen halkalar, titreyen telefon), cevaplanır (ses dalgası, sayaç, sırayla gelen sohbet balonları) ve "Çözüldü" ile biter. Değişen kelime ("Evinden bağlan / kazan / büyü"), sayan istatistikler
 - **Pozisyon**: ne yapacaksın, kimleri arıyoruz, evden çalışmak için gerekenler
-- **Neden Turkcell**: Kariyerim'deki "Gelecek Burada" kartlarından esinlenen altıgen kartlar
-- **Dönen altıgen slayt**: Kariyerim'deki slaytın çağrı merkezi uyarlaması (otomatik geçiş, kaydırma ile değiştirme, nokta göstergesi)
+- **Neden Gratis**: altıgen kartlar
+- **Dönen altıgen slayt**: çağrı merkezi mesajlarıyla (otomatik geçiş, kaydırma ile değiştirme, nokta göstergesi)
 - **Kariyer yolu**: Müşteri Temsilcisi → Kıdemli Temsilci → Takım Lideri → Süpervizör; kaydırınca dolan ilerleme çizgisi
 - **Başvuru süreci**, **SSS**, kaydırınca beliren bölümler
 - **Başvuru formu – "Kariyerin burada başlıyor"**: ad, soyad, e-posta, **cep telefonu (TR maskesi)**, şehir, LinkedIn (isteğe bağlı), **ne kadar vakit ayırabilirsin** (tam / yarı zamanlı / hafta sonu / esnek), **deneyim** (deneyimsiz de olur), not, KVKK onayı; doluluk yüzdesi gösteren ilerleme çubuğu
@@ -48,11 +48,11 @@ npm run dev
 | Değişken | Açıklama | Varsayılan |
 | --- | --- | --- |
 | `ADMIN_USERNAME` | Admin kullanıcı adı | `admin` |
-| `ADMIN_PASSWORD` | Admin şifresi | `Turkcell2026!` |
+| `ADMIN_PASSWORD` | Admin şifresi | `Gratis2026!` |
 | `ADMIN_SESSION_SECRET` | Oturum çerezini imzalayan gizli anahtar | geliştirme değeri |
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase proje adresi | – |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role anahtarı (gizli, yalnızca sunucuda) | – |
-| `SUPABASE_CV_BUCKET` | CV yükleme açılırsa kullanılacak private bucket | `turkcell-cvs` |
+| `SUPABASE_CV_BUCKET` | CV yükleme açılırsa kullanılacak private bucket | `gratis-cvs` |
 | `DATA_DIR` | Supabase tanımlı değilse kullanılan yerel klasör | `./data` |
 
 > Canlıya alırken varsayılan şifreyi ve `ADMIN_SESSION_SECRET` değerini mutlaka değiştir.
@@ -80,6 +80,6 @@ reklam/                              kampanya afişleri ve üretici script
 
 ## Supabase
 
-- Başvurular `fs_docs` tablosunda `turkcell_applications` koleksiyonunda JSONB belge olarak tutulur (`collection`, `id`, `data`); canlı ziyaretçi sinyalleri `turkcell_presence` koleksiyonunda.
+- Başvurular `fs_docs` tablosunda `gratis_applications` koleksiyonunda JSONB belge olarak tutulur (`collection`, `id`, `data`); canlı ziyaretçi sinyalleri `gratis_presence` koleksiyonunda.
 - Tabloya tarayıcıdan erişim kapalıdır (RLS); uygulama yalnızca sunucuda service role anahtarıyla erişir, anahtar tarayıcıya gönderilmez.
-- Supabase panelinde başvuruları görmek için: **Table Editor → fs_docs**, `collection = turkcell_applications` filtresi.
+- Supabase panelinde başvuruları görmek için: **Table Editor → fs_docs**, `collection = gratis_applications` filtresi.
